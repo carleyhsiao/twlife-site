@@ -1,0 +1,32 @@
+name: 每日自動更新基金淨值
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-nav:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 取得程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 執行淨值更新腳本
+        run: python update_nav.py
+
+      - name: 推回 GitHub
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add baofu.html
+          git diff --cached --quiet || git commit -m "⚡ 自動更新基金淨值 $(date +'%Y/%m/%d')"
+          git push
