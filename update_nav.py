@@ -2,7 +2,7 @@
 """
 update_nav.py
 每天台灣時間 08:00 由 GitHub Actions 自動執行。
-從 MoneyDJ 抓取 DB001–DB005 最新淨值及配息基準日，更新 baofu.html。
+直接從 MoneyDJ 抓取 DB001–DB005 最新淨值及配息資料，更新 baofu.html。
 """
 
 import re
@@ -26,57 +26,77 @@ HEADERS = {
 def fetch_md(url):
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=20) as r:
-        return r.read().decode("big5", errors="replace")
+        raw = r.read()
+        return raw.decode("big5", errors="replace")
 
 def parse_nav(html):
-    """抓淨值頁第一筆：日期 + 淨值"""
-    for pat in [
+    """
+    MoneyDJ 淨值頁表格：日期 | 最新淨值 | 漲跌 | 年最高 | 年最低
+    抓第一筆：日期 + 淨值
+    """
+    m = re.search(
         r"(\d{4}/\d{2}/\d{2})</td>\s*<td[^>]*>\s*([\d.]+)\s*</td>",
-        r"(\d{4}/\d{2}/\d{2})\s*</td>\s*<td[^>]*>\s*([\d.]+)",
-    ]:
-        m = re.search(pat, html)
-        if m:
-            nav = float(m.group(2))
-            if nav > 0:
-                return {"date": m.group(1), "nav": nav}
+        html
+    )
+    if m:
+        nav = float(m.group(2))
+        if nav > 0:
+            return {"date": m.group(1), "nav": nav}
     return None
 
 def parse_div(html):
     """
-    抓配息頁第一筆：配息基準日 + 配息金額
-    MoneyDJ 配息表格欄位：基準日|除息日|發放日|類型|每單位配息|年化率
-    部分基金發放日為 '--'，需要容錯處理
+    MoneyDJ 配息頁表格：
+    配息基準日 | 除息日 | 發放日 | 類型 | 每單位配息 | 年化配息率% | 備註 | 附件
+    
+    直接用 markdown 轉換後的格式解析（已由 web_fetch 確認）：
+    | 2026/03/13 | 2026/03/16 | 2026/03/18 | 配息 | 0.055 | 7.97 | ... |
     """
-    # 先找所有出現的日期
-    all_dates = re.findall(r"(\d{4}/\d{2}/\d{2})</td>", html)
-    if not all_dates:
-        return None
+    # 找第一列配息資料：基準日 + 除息日（兩個連續日期）+ 往後找配息金額
+    # MoneyDJ 格式確認：三個日期欄 + 類型 + 配息金額
+    m = re.search(
+        r"(\d{4}/\d{2}/\d{2})</td>\s*"   # 配息基準日
+        r"<td[^>]*>\d{4}/\d{2}/\d{2}</td>\s*"  # 除息日
+        r"<td[^>]*>.*?</td>\s*"           # 發放日（可能是日期或--）
+        r"<td[^>]*>[^<]*</td>\s*"         # 類型（配息）
+        r"<td[^>]*>\s*([\d.]+)\s*</td>",  # 每單位配息金額
+        html,
+        re.DOTALL
+    )
+    if m:
+        div = float(m.group(2))
+        if 0.001 < div < 100:
+            return {"divDate": m.group(1), "div": div}
 
-    div_date = all_dates[0]  # 第一個日期 = 配息基準日
+    # 備用1：發放日可能是 -- 格式（摩根等）
+    m = re.search(
+        r"(\d{4}/\d{2}/\d{2})</td>\s*"
+        r"<td[^>]*>\d{4}/\d{2}/\d{2}</td>\s*"
+        r"<td[^>]*>--</td>\s*"
+        r"<td[^>]*>[^<]*</td>\s*"
+        r"<td[^>]*>\s*([\d.]+)\s*</td>",
+        html,
+        re.DOTALL
+    )
+    if m:
+        div = float(m.group(2))
+        if 0.001 < div < 100:
+            return {"divDate": m.group(1), "div": div}
 
-    # 在第一個日期之後，找第一個合理的配息金額（0.001~100）
-    # 跳過日期數字，專找小數點數字
-    after_first_date = html[html.find(div_date):]
-
-    # 找所有 <td> 裡的數字
-    nums = re.findall(r"<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>", after_first_date[:1500])
-
-    for num_str in nums:
-        val = float(num_str)
-        # 配息金額特徵：0.01~10 之間（排除年化率、淨值等大數字）
-        if 0.01 <= val <= 10:
-            return {"divDate": div_date, "div": val}
-
-    # 備用：找整數配息（如 1, 2 等）
-    for num_str in nums:
-        val = float(num_str)
-        if 0.001 < val < 100:
-            return {"divDate": div_date, "div": val}
+    # 備用2：更寬鬆 - 找第一個日期 + 往後1500字元內找合理配息金額
+    dates = re.findall(r"(\d{4}/\d{2}/\d{2})</td>", html)
+    if dates:
+        div_date = dates[0]
+        after = html[html.find(div_date + "</td>"):]
+        nums = re.findall(r"<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>", after[:2000])
+        for s in nums:
+            v = float(s)
+            if 0.01 <= v <= 10:   # 配息金額通常在此範圍
+                return {"divDate": div_date, "div": v}
 
     return None
 
 def update_el(html, el_id, new_text):
-    """更新 HTML 中 id=el_id 的元素內容"""
     pattern = rf'(id="{re.escape(el_id)}"[^>]*>)[^<]*'
     result, n = re.subn(pattern, rf'\g<1>{new_text}', html)
     if n == 0:
@@ -97,14 +117,18 @@ def main():
     for code, cfg in FUNDS.items():
         print(f"\n📊 {code} {cfg['name']}")
         try:
-            nav_html = fetch_md(f"https://www.moneydj.com/funddj/ya/yp010001.djhtm?a={cfg['mdNav']}")
-            div_html = fetch_md(f"https://www.moneydj.com/funddj/yp/wb05.djhtm?a={cfg['mdDiv']}")
+            nav_html = fetch_md(
+                f"https://www.moneydj.com/funddj/ya/yp010001.djhtm?a={cfg['mdNav']}"
+            )
+            div_html = fetch_md(
+                f"https://www.moneydj.com/funddj/yp/wb05.djhtm?a={cfg['mdDiv']}"
+            )
 
             nav_data = parse_nav(nav_html)
             div_data = parse_div(div_html)
 
             if not nav_data:
-                raise ValueError("淨值解析失敗")
+                raise ValueError("淨值解析失敗，請檢查 MoneyDJ 頁面")
 
             nav      = nav_data["nav"]
             nav_date = nav_data["date"]
@@ -127,7 +151,7 @@ def main():
 
     ts = tw_now.strftime("%Y/%m/%d %H:%M 更新")
     html = re.sub(r'id="lastUpdate"[^>]*>[^<]*', f'id="lastUpdate">{ts}', html)
-    print(f"\n⏰ 更新時間：{ts}")
+    print(f"\n⏰ 時間戳記：{ts}")
 
     with open("baofu.html", "w", encoding="utf-8") as f:
         f.write(html)
