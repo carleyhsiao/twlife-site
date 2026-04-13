@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
 update_nav.py
-每次執行時從 MoneyDJ 抓取 DB001–DB005 最新淨值及配息資料，
-並更新 baofu.html 內對應的 HTML 元素內容。
-GitHub Actions 每天台灣時間 08:00 自動執行。
+每天台灣時間 08:00 由 GitHub Actions 自動執行。
+從 MoneyDJ 抓取 DB001–DB005 最新淨值及配息基準日，更新 baofu.html。
 """
 
 import re
@@ -30,6 +29,7 @@ def fetch_md(url):
         return r.read().decode("big5", errors="replace")
 
 def parse_nav(html):
+    """抓淨值頁第一筆：日期 + 淨值"""
     for pat in [
         r"(\d{4}/\d{2}/\d{2})</td>\s*<td[^>]*>\s*([\d.]+)\s*</td>",
         r"(\d{4}/\d{2}/\d{2})\s*</td>\s*<td[^>]*>\s*([\d.]+)",
@@ -42,29 +42,41 @@ def parse_nav(html):
     return None
 
 def parse_div(html):
-    # 配息頁格式：配息基準日 | 除息日 | 發放日 | 類型 | 每單位配息
-    # 抓兩個連續日期（基準日 + 除息日），再往後找配息金額
-    m = re.search(
-        r"(\d{4}/\d{2}/\d{2})</td>\s*<td[^>]*>\d{4}/\d{2}/\d{2}</td>"
-        r"[\s\S]{0,300}?<td[^>]*>\s*([\d.]+)\s*</td>",
-        html,
-    )
-    if m:
-        div = float(m.group(2))
-        if 0.001 < div < 100:
-            return {"divDate": m.group(1), "div": div}
-    # 備用
-    m = re.search(
-        r"(\d{4}/\d{2}/\d{2})</td>[\s\S]{0,400}?<td[^>]*>\s*([\d.]+)\s*</td>",
-        html,
-    )
-    if m:
-        div = float(m.group(2))
-        if 0.001 < div < 100:
-            return {"divDate": m.group(1), "div": div}
+    """
+    抓配息頁第一筆：配息基準日 + 配息金額
+    MoneyDJ 配息表格欄位：基準日|除息日|發放日|類型|每單位配息|年化率
+    部分基金發放日為 '--'，需要容錯處理
+    """
+    # 先找所有出現的日期
+    all_dates = re.findall(r"(\d{4}/\d{2}/\d{2})</td>", html)
+    if not all_dates:
+        return None
+
+    div_date = all_dates[0]  # 第一個日期 = 配息基準日
+
+    # 在第一個日期之後，找第一個合理的配息金額（0.001~100）
+    # 跳過日期數字，專找小數點數字
+    after_first_date = html[html.find(div_date):]
+
+    # 找所有 <td> 裡的數字
+    nums = re.findall(r"<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>", after_first_date[:1500])
+
+    for num_str in nums:
+        val = float(num_str)
+        # 配息金額特徵：0.01~10 之間（排除年化率、淨值等大數字）
+        if 0.01 <= val <= 10:
+            return {"divDate": div_date, "div": val}
+
+    # 備用：找整數配息（如 1, 2 等）
+    for num_str in nums:
+        val = float(num_str)
+        if 0.001 < val < 100:
+            return {"divDate": div_date, "div": val}
+
     return None
 
 def update_el(html, el_id, new_text):
+    """更新 HTML 中 id=el_id 的元素內容"""
     pattern = rf'(id="{re.escape(el_id)}"[^>]*>)[^<]*'
     result, n = re.subn(pattern, rf'\g<1>{new_text}', html)
     if n == 0:
@@ -97,10 +109,11 @@ def main():
             nav      = nav_data["nav"]
             nav_date = nav_data["date"]
             div      = div_data["div"]     if div_data else cfg["div"]
-            div_date = div_data["divDate"] if div_data else "查詢中"
+            div_date = div_data["divDate"] if div_data else "—"
             rate     = round((div * 12) / nav * 100, 2)
 
-            print(f"  淨值：{nav}（{nav_date}）  配息基準日：{div_date}  配息：{div}  年化率：{rate}%")
+            print(f"  淨值：{nav}（{nav_date}）")
+            print(f"  配息基準日：{div_date}  配息：{div}  年化率：{rate}%")
 
             html = update_el(html, f"nav-{code}",     f"USD {nav:.4f}")
             html = update_el(html, f"date-{code}",    nav_date)
