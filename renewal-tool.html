@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>續期保費扣繳日期查詢</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #F7F9FC;
+    --card: #ffffff;
+    --accent: #2563EB;
+    --accent-light: #EFF6FF;
+    --accent2: #0EA5E9;
+    --green: #10B981;
+    --green-light: #ECFDF5;
+    --orange: #F59E0B;
+    --orange-light: #FFFBEB;
+    --red: #EF4444;
+    --text: #1E293B;
+    --text-sub: #64748B;
+    --border: #E2E8F0;
+    --shadow: 0 2px 16px rgba(37,99,235,0.08);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 32px;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1D4ED8 0%, #0EA5E9 100%);
+    color: white;
+    padding: 28px 20px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -20px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+  .header p {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-top: 4px;
+    position: relative;
+  }
+
+  /* Main container */
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* Input card */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-title span { font-size: 16px; }
+
+  /* Date input */
+  .input-group {
+    margin-bottom: 14px;
+  }
+  .input-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .input-group input[type="date"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .input-group input[type="date"]:focus {
+    border-color: var(--accent);
+    background: white;
+  }
+
+  /* Toggle groups */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .toggle-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 500;
+    color: var(--text-sub);
+    transition: all 0.18s;
+    text-align: center;
+  }
+  .toggle-btn.active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .toggle-label {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 500;
+    margin-bottom: 7px;
+  }
+
+  /* hint */
+  .hint {
+    font-size: 11.5px;
+    color: var(--text-sub);
+    background: #F8FAFC;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 2px;
+    line-height: 1.6;
+    border-left: 3px solid var(--border);
+  }
+  .hint b { color: var(--accent); }
+
+  /* Calc button */
+  .calc-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #2563EB, #0EA5E9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+  /* Result card */
+  .result-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    margin-top: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { opacity:0; transform:translateY(12px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .result-header {
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #1E40AF, #0284C7);
+    color: white;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .result-header .badge-type {
+    font-size: 12px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-weight: 600;
+  }
+
+  /* Timeline */
+  .timeline {
+    padding: 20px 20px 4px;
+  }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .tl-dot-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 36px;
+  }
+  .tl-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .tl-dot.d1 { background: #3B82F6; }
+  .tl-dot.d2 { background: #6366F1; }
+  .tl-dot.d3 { background: #8B5CF6; }
+  .tl-dot.dlast { background: linear-gradient(135deg, #10B981, #059669); }
+
+  .tl-line {
+    width: 2px;
+    height: 18px;
+    background: #E2E8F0;
+    margin-top: 4px;
+  }
+  .tl-content { flex: 1; padding-top: 6px; }
+  .tl-label {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 500;
+  }
+  .tl-date {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 1px;
+    letter-spacing: 0.3px;
+  }
+  .tl-date .month { font-size: 15px; color: var(--text-sub); font-weight: 400; }
+
+  /* Last + deadline */
+  .deadline-row {
+    margin: 0 20px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .deadline-box {
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .deadline-box.last {
+    background: var(--green-light);
+    border: 1.5px solid #A7F3D0;
+  }
+  .deadline-box.limit {
+    background: var(--orange-light);
+    border: 1.5px solid #FDE68A;
+  }
+  .deadline-box .d-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .deadline-box.last .d-label { color: #059669; }
+  .deadline-box.limit .d-label { color: #B45309; }
+  .deadline-box .d-date {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .deadline-box.last .d-date { color: #065F46; }
+  .deadline-box.limit .d-date { color: #92400E; }
+  .deadline-box .d-sub {
+    font-size: 10.5px;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+
+  /* Notes */
+  .notes-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-top: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .notes-card .card-title { margin-bottom: 10px; }
+  .note-item {
+    font-size: 12px;
+    color: var(--text-sub);
+    line-height: 1.7;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .note-item:last-child { border-bottom: none; }
+  .note-item strong { color: var(--accent); }
+
+  .warning-bar {
+    background: #FEF3C7;
+    border: 1px solid #FDE68A;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #92400E;
+    margin-top: 14px;
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  .hidden { display: none; }
+</style>
+
+<style id="site-nav-style">
+  .site-top-nav{
+    position:sticky; top:0; z-index:9999; display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 14px; background:rgba(15,23,42,.92); color:#fff; backdrop-filter: blur(8px);
+    font-family:"Noto Sans TC", system-ui, sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.12);
+  }
+  .site-top-nav .site-nav-left{display:flex; align-items:center; gap:10px; min-width:0;}
+  .site-top-nav .site-dot{width:10px; height:10px; border-radius:50%; background:#22c55e; flex-shrink:0;}
+  .site-top-nav .site-title{font-size:14px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .site-top-nav .site-links{display:flex; gap:8px; flex-wrap:wrap;}
+  .site-top-nav a{
+    text-decoration:none; color:#0f172a; background:#fff; border-radius:999px; padding:8px 12px; font-size:13px; font-weight:800;
+  }
+  @media (max-width:640px){
+    .site-top-nav{padding:10px 12px; align-items:flex-start; flex-direction:column;}
+    .site-top-nav .site-links{width:100%;}
+    .site-top-nav a{flex:1; text-align:center;}
+  }
+</style>
+
+<style id="site-mobile-tweak">
+  @media (max-width: 768px) {
+    body { font-size: 16px !important; }
+    .page, .main, .wrap, .container { padding-left: 12px !important; padding-right: 12px !important; }
+    table { display: block; width: 100% !important; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="site-top-nav">
+  <div class="site-nav-left">
+    <span class="site-dot"></span>
+    <div class="site-title">續期保費扣繳日期查詢</div>
+  </div>
+  <div class="site-links">
+    <a href="index.html">回首頁</a>
+  </div>
+</div>
+
+
+<div class="header">
+  <h1>📋 續期保費扣繳日期查詢</h1>
+  <p>銀行自動扣繳 ＋ 信用卡請款 整合工具</p>
+  <div style="margin-top:10px;background:rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;font-size:11.5px;letter-spacing:0.5px;position:relative;">
+    ⚠️ 僅供內部教育訓練參考使用
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Input -->
+  <div class="card">
+    <div class="card-title"><span>⚙️</span> 查詢條件</div>
+
+    <div class="input-group">
+      <label>應繳日</label>
+      <input type="date" id="payDate" value="2026-05-24">
+    </div>
+
+    <div class="toggle-label">保單類型</div>
+    <div class="toggle-group" id="typeGroup">
+      <button class="toggle-btn" data-val="A" onclick="selectType(this)">
+        A 類<br><span style="font-size:11px;font-weight:400;">00/02/06/09/60 開頭</span>
+      </button>
+      <button class="toggle-btn active" data-val="B" onclick="selectType(this)">
+        B 類<br><span style="font-size:11px;font-weight:400;">非上述開頭</span>
+      </button>
+    </div>
+
+    <div class="toggle-label">扣款方式</div>
+    <div class="toggle-group" id="methodGroup">
+      <button class="toggle-btn active" data-val="銀行" onclick="selectMethod(this)">
+        🏦 銀行扣繳
+      </button>
+      <button class="toggle-btn" data-val="信用卡" onclick="selectMethod(this)">
+        💳 信用卡請款
+      </button>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">
+      🔍 查詢扣款日期
+    </button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card hidden" id="resultCard">
+    <div class="result-header">
+      <div>
+        <div style="font-weight:700;font-size:15px">扣款時間表</div>
+        <div style="opacity:0.75;font-size:12px;margin-top:2px" id="resultSub"></div>
+      </div>
+      <div class="badge-type" id="resultBadge"></div>
+    </div>
+
+    <div class="timeline" id="timeline"></div>
+
+    <div class="deadline-row">
+      <div class="deadline-box last">
+        <div class="d-label">✅ 最後扣款日</div>
+        <div class="d-date" id="lastDate">—</div>
+        <div class="d-sub">期限內最後基準日</div>
+      </div>
+      <div class="deadline-box limit">
+        <div class="d-label">⏰ 期限日</div>
+        <div class="d-date" id="limitDate">—</div>
+        <div class="d-sub" id="limitDays">55/60天含</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="notes-card">
+    <div class="card-title"><span>📌</span> 規則說明</div>
+    <div class="note-item">
+      <strong>銀行扣繳 A 類</strong>：基準日為每月 7、22 日；應繳日≤15日→當月22起算
+    </div>
+    <div class="note-item">
+      <strong>銀行扣繳 B 類</strong>：基準日為每月 10、25 日；應繳日11-25→當月25；1-10→當月10；26-月底→次月10起算
+    </div>
+    <div class="note-item">
+      <strong>信用卡 A 類</strong>：基準日每月 5、15、25 日；應繳日1-5→5；6-15→15；16-25→25；26-月底→次月5
+    </div>
+    <div class="note-item">
+      <strong>信用卡 B 類</strong>：基準日每月 8、23 日；應繳日1-8→8；9-23→23；24-月底→次月8
+    </div>
+    <div class="note-item">
+      <strong>最後扣款日</strong>：A類=應繳日起55天(含)內最後基準日；B類=60天(含)內最後基準日
+    </div>
+    <div class="warning-bar">
+      ⚠️ 遇例假日順延；實際執行請以公司系統／銀行／信用卡為準
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selectedType = 'B';
+  let selectedMethod = '銀行';
+
+  function selectType(btn) {
+    document.querySelectorAll('#typeGroup .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedType = btn.dataset.val;
+  }
+
+  function selectMethod(btn) {
+    document.querySelectorAll('#methodGroup .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedMethod = btn.dataset.val;
+  }
+
+  function fmtDate(d) {
+    if (!d || isNaN(d)) return '—';
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const yr = d.getFullYear();
+    return `${yr}/${String(m).padStart(2,'0')}/${String(day).padStart(2,'0')}`;
+  }
+
+  function fmtDisplay(d) {
+    if (!d || isNaN(d)) return { main: '—', month: '' };
+    const month = ['一','二','三','四','五','六','七','八','九','十','十一','十二'][d.getMonth()];
+    return { main: `${d.getDate()} 日`, month: `${d.getFullYear()} 年 ${month}月` };
+  }
+
+  function addDays(d, n) {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  function dateOf(y, m, day) {
+    // handle month overflow
+    return new Date(y, m - 1, day);
+  }
+
+  // 銀行 A 類: 基準日 7, 22
+  function bankA(base) {
+    const y = base.getFullYear(), m = base.getMonth() + 1, d = base.getDate();
+    let d1, d2, d3;
+    if (d <= 15) {
+      d1 = dateOf(y, m, 22);
+      d2 = dateOf(y, m + 1, 7);
+      d3 = dateOf(y, m + 1, 22);
+    } else {
+      d1 = dateOf(y, m + 1, 7);
+      d2 = dateOf(y, m + 1, 22);
+      d3 = dateOf(y, m + 2, 7);
+    }
+    const limit = addDays(base, 55);
+    const deadline = lastBenchmark(limit, [7, 22], base);
+    return { dates: [d1, d2, d3], last: deadline, limit };
+  }
+
+  // 銀行 B 類: 基準日 10, 25
+  function bankB(base) {
+    const y = base.getFullYear(), m = base.getMonth() + 1, d = base.getDate();
+    let d1, d2, d3;
+    if (d >= 11 && d <= 25) {
+      d1 = dateOf(y, m, 25);
+      d2 = dateOf(y, m + 1, 10);
+      d3 = dateOf(y, m + 1, 25);
+    } else if (d <= 10) {
+      d1 = dateOf(y, m, 10);
+      d2 = dateOf(y, m, 25);
+      d3 = dateOf(y, m + 1, 10);
+    } else {
+      d1 = dateOf(y, m + 1, 10);
+      d2 = dateOf(y, m + 1, 25);
+      d3 = dateOf(y, m + 2, 10);
+    }
+    const limit = addDays(base, 60);
+    const deadline = lastBenchmark(limit, [10, 25], base);
+    return { dates: [d1, d2, d3], last: deadline, limit };
+  }
+
+  // 信用卡 A 類: 基準日 5, 15, 25
+  function ccA(base) {
+    const y = base.getFullYear(), m = base.getMonth() + 1, d = base.getDate();
+    let d1;
+    if (d <= 5) d1 = dateOf(y, m, 5);
+    else if (d <= 15) d1 = dateOf(y, m, 15);
+    else if (d <= 25) d1 = dateOf(y, m, 25);
+    else d1 = dateOf(y, m + 1, 5);
+
+    const d2 = nextBenchmark(d1, [5, 15, 25]);
+    const d3 = nextBenchmark(d2, [5, 15, 25]);
+    const limit = addDays(base, 55);
+    const deadline = lastBenchmark(limit, [5, 15, 25], base);
+    return { dates: [d1, d2, d3], last: deadline, limit };
+  }
+
+  // 信用卡 B 類: 基準日 8, 23
+  function ccB(base) {
+    const y = base.getFullYear(), m = base.getMonth() + 1, d = base.getDate();
+    let d1;
+    if (d <= 8) d1 = dateOf(y, m, 8);
+    else if (d <= 23) d1 = dateOf(y, m, 23);
+    else d1 = dateOf(y, m + 1, 8);
+
+    const d2 = nextBenchmark(d1, [8, 23]);
+    const d3 = nextBenchmark(d2, [8, 23]);
+    const limit = addDays(base, 60);
+    const deadline = lastBenchmark(limit, [8, 23], base);
+    return { dates: [d1, d2, d3], last: deadline, limit };
+  }
+
+  function nextBenchmark(from, benchmarks) {
+    const y = from.getFullYear(), m = from.getMonth() + 1, d = from.getDate();
+    // find next benchmark after current
+    for (const b of benchmarks) {
+      if (b > d) return dateOf(y, m, b);
+    }
+    return dateOf(y, m + 1, benchmarks[0]);
+  }
+
+  function lastBenchmark(limitDate, benchmarks, base) {
+    // find the last benchmark <= limitDate and >= base
+    const candidates = [];
+    for (let offset = -1; offset <= 2; offset++) {
+      for (const b of benchmarks) {
+        const y = limitDate.getFullYear();
+        const m = limitDate.getMonth() + 1 + offset;
+        const d = dateOf(y, m, b);
+        if (d <= limitDate && d >= base) candidates.push(d);
+      }
+    }
+    if (!candidates.length) return null;
+    return candidates.reduce((a, c) => c > a ? c : a);
+  }
+
+  function calculate() {
+    const dateStr = document.getElementById('payDate').value;
+    if (!dateStr) { alert('請選擇應繳日'); return; }
+
+    // Parse date correctly (avoid timezone offset)
+    const [yr, mo, dy] = dateStr.split('-').map(Number);
+    const base = new Date(yr, mo - 1, dy);
+
+    let result;
+    if (selectedMethod === '銀行') {
+      result = selectedType === 'A' ? bankA(base) : bankB(base);
+    } else {
+      result = selectedType === 'A' ? ccA(base) : ccB(base);
+    }
+
+    // Render
+    const labels = ['第一次扣款日', '第二次扣款日', '第三次扣款日'];
+    const dotClass = ['d1', 'd2', 'd3'];
+    const nums = ['1', '2', '3'];
+
+    let html = '';
+    result.dates.forEach((d, i) => {
+      const f = fmtDisplay(d);
+      html += `
+        <div class="timeline-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot ${dotClass[i]}">${nums[i]}</div>
+            ${i < 2 ? '<div class="tl-line"></div>' : ''}
+          </div>
+          <div class="tl-content">
+            <div class="tl-label">${labels[i]}</div>
+            <div class="tl-date"><span class="month">${f.month}</span> ${f.main}</div>
+          </div>
+        </div>`;
+    });
+    document.getElementById('timeline').innerHTML = html;
+
+    document.getElementById('lastDate').textContent = result.last ? fmtDate(result.last) : '—';
+    document.getElementById('limitDate').textContent = fmtDate(result.limit);
+
+    const days = (selectedType === 'A' && selectedMethod === '銀行') ? 55 :
+                 (selectedType === 'B' && selectedMethod === '銀行') ? 60 :
+                 (selectedType === 'A' && selectedMethod === '信用卡') ? 55 : 60;
+    document.getElementById('limitDays').textContent = `應繳日起 ${days} 天（含）`;
+
+    document.getElementById('resultSub').textContent = `應繳日：${fmtDate(base)}`;
+    document.getElementById('resultBadge').textContent = `${selectedType} 類｜${selectedMethod}`;
+
+    document.getElementById('resultCard').classList.remove('hidden');
+    document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Auto calc on load
+  window.onload = () => {
+    // Set today's date
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    // Keep the default from Excel
+  };
+</script>
+</body>
+</html>

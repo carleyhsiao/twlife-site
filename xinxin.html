@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信鑫滿滿｜銀專快查版</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#1a237e;--blue:#1565c0;--sky:#e3f2fd;
+  --sun:#ffca28;--sun2:#fff9c4;--coral:#ff5722;
+  --pink:#e91e8c;--pink2:#fce4ec;
+  --teal:#00838f;--teal2:#e0f7fa;
+  --green:#2e7d32;--grn2:#e8f5e9;
+  --amb:#ef6c00;--pur:#5e35b1;--pur2:#ede7f6;
+  --sub:#546e7a;--bdr:#cfd8dc;--text:#1a1a2e;
+  --indigo:#283593;--deep:#0d1b6b;
+}
+html,body{font-family:'Noto Sans TC',sans-serif;color:var(--text);background:#f0f4f8;font-size:10pt;}
+.page{max-width:880px;margin:0 auto;padding:7mm 7mm 14mm;background:linear-gradient(155deg,#ede7f6 0%,#fff9c4 48%,#e0f7fa 100%);}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(130deg,#1a237e 0%,#4527a0 55%,#7b1fa2 100%);border-radius:16px;padding:4.5mm 6mm;margin-bottom:4mm;box-shadow:0 5px 20px rgba(26,35,126,.35);position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05);top:-18px;right:80px;}
+.hdr::after{content:'';position:absolute;width:50px;height:50px;border-radius:50%;background:rgba(255,202,40,.08);bottom:-10px;left:40%;}
+.hdr-left{display:flex;align-items:center;gap:4mm;}
+.logo{width:14mm;height:14mm;background:var(--sun);border-radius:45% 55% 50% 50%/40% 45% 55% 60%;display:flex;align-items:center;justify-content:center;font-size:9.5pt;font-weight:900;color:var(--navy);box-shadow:0 2px 8px rgba(255,193,7,.45);flex-shrink:0;z-index:1;}
+.hdr-text{color:white;z-index:1;}
+.h-pre{font-size:6.5pt;opacity:.7;letter-spacing:2px;font-weight:700;}
+.h-main{font-family:'Nunito',sans-serif;font-size:24pt;font-weight:900;line-height:1;}
+.h-sub{font-size:7.5pt;opacity:.85;font-weight:700;margin-top:.8mm;}
+.h-tag{display:inline-block;margin-top:1.5mm;font-size:5.8pt;font-weight:700;background:rgba(255,255,255,.15);border:1px dashed rgba(255,255,255,.45);color:white;padding:.4mm 2mm;border-radius:20px;}
+.hdr-badges{display:flex;flex-direction:column;align-items:flex-end;gap:2.5mm;z-index:1;}
+.hdr-pill{background:rgba(255,255,255,.15);border:1.5px dashed rgba(255,255,255,.4);border-radius:10px;padding:2mm 3.5mm;text-align:center;color:white;}
+.hp-lbl{font-size:6pt;font-weight:900;opacity:.8;letter-spacing:1px;}
+.hp-val{font-family:'Nunito',sans-serif;font-size:12pt;font-weight:900;line-height:1.1;}
+.hdr-sun{background:var(--sun);border-radius:11px;padding:2.5mm 4.5mm;text-align:center;box-shadow:0 3px 12px rgba(255,193,7,.45);}
+.hs-lbl{font-size:6.5pt;font-weight:900;color:var(--navy);}
+.hs-val{font-family:'Nunito',sans-serif;font-size:14pt;font-weight:900;color:var(--navy);line-height:1.1;}
+
+/* FEATURES */
+.feats{display:flex;gap:2.5mm;margin-bottom:4mm;}
+.feat{flex:1;border-radius:11px;padding:3mm 3.5mm;display:flex;align-items:center;gap:2.5mm;border:2px solid transparent;}
+.f1{background:var(--sky);border-color:#90caf9;}
+.f2{background:var(--sun2);border-color:#ffe082;}
+.f3{background:var(--teal2);border-color:#80deea;}
+.fem{font-size:17pt;flex-shrink:0;line-height:1;}
+.ftxt{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:9.5pt;font-weight:900;color:var(--navy);line-height:1.3;}
+
+/* SEC TITLE */
+.sec{display:flex;align-items:center;gap:2.5mm;margin:5mm 0 2.5mm;font-family:'Nunito','Noto Sans TC',sans-serif;font-size:12pt;font-weight:900;color:var(--navy);border-left:5px solid var(--sun);padding-left:2.5mm;}
+
+/* LAYOUT */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:3.5mm;margin-bottom:3.5mm;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3.5mm;margin-bottom:3.5mm;}
+.mb{margin-bottom:3.5mm;}
+
+/* CARD */
+.card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);border:2px solid transparent;}
+.c-blue{border-color:#90caf9;}.c-teal{border-color:#80deea;}.c-pink{border-color:#f48fb1;}
+.c-amb{border-color:#ffd54f;}.c-pur{border-color:#ce93d8;}.c-grn{border-color:#a5d6a7;}
+.c-ind{border-color:#9fa8da;}
+
+.ch{padding:2mm 3.5mm;display:flex;align-items:center;gap:2mm;color:white;}
+.ch-blue{background:linear-gradient(90deg,#1565c0,#2196f3);}
+.ch-teal{background:linear-gradient(90deg,#00695c,#26c6da);}
+.ch-pink{background:linear-gradient(90deg,#880e4f,#e91e8c);}
+.ch-amb{background:linear-gradient(90deg,#bf360c,#ffa000);}
+.ch-pur{background:linear-gradient(90deg,#4527a0,#9c27b0);}
+.ch-grn{background:linear-gradient(90deg,#1b5e20,#43a047);}
+.ch-ind{background:linear-gradient(90deg,#1a237e,#5c6bc0);}
+.ch i{font-size:11pt;font-style:normal;}
+.ch-t{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:9.5pt;font-weight:900;}
+.cb{padding:2.5mm 3.5mm;}
+
+/* ROWS */
+.row{display:flex;align-items:flex-start;padding:1.5mm 0;border-bottom:1.5px dashed #e8ecf0;gap:2mm;}
+.row:last-child{border-bottom:none;}
+.rl{font-size:7pt;color:var(--sub);font-weight:700;min-width:20mm;flex-shrink:0;padding-top:.2mm;}
+.rv{font-size:9pt;font-weight:700;flex:1;line-height:1.45;}
+.hl{color:var(--blue);}.warn{color:var(--coral);}.ok{color:var(--green);}
+.pur{color:var(--pur);}
+
+/* CHIPS */
+.chips{display:flex;gap:1.8mm;flex-wrap:wrap;margin-top:1mm;}
+.chip{padding:1mm 2.5mm;border-radius:20px;font-size:8pt;font-weight:800;border:2px solid;}
+.chip-b{background:var(--sky);border-color:#90caf9;color:var(--blue);}
+.chip-t{background:var(--teal2);border-color:#80deea;color:var(--teal);}
+.chip-p{background:var(--pink2);border-color:#f48fb1;color:var(--pink);}
+.chip-u{background:var(--pur2);border-color:#ce93d8;color:var(--pur);}
+.chip-y{background:var(--sun2);border-color:#ffe082;color:var(--amb);}
+
+/* INFO BOXES */
+.ib{border-radius:7px;padding:2mm 3mm;margin-bottom:2mm;font-size:8pt;line-height:1.7;}
+.ib:last-child{margin-bottom:0;}
+.ib-b{background:var(--sky);border:1.5px solid #90caf9;color:var(--blue);}
+.ib-b b{color:var(--navy);}
+.ib-t{background:var(--teal2);border:1.5px solid #80deea;color:#00695c;}
+.ib-t b{color:var(--teal);}
+.ib-p{background:var(--pink2);border:1.5px dashed #f48fb1;color:#ad1457;}
+.ib-p b{color:var(--pink);}
+.ib-w{background:#fff8e1;border:1.5px solid #ffe082;color:#e65100;}
+.ib-g{background:var(--grn2);border:1.5px solid #a5d6a7;color:var(--green);}
+.ib-u{background:var(--pur2);border:1.5px solid #ce93d8;color:var(--pur);}
+.ib-u b{color:var(--indigo);}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:2mm;flex-wrap:wrap;margin:2mm 0;}
+.fb{background:white;border:2px solid var(--teal);border-radius:7px;padding:1.8mm 2.5mm;font-size:8.5pt;font-weight:800;color:var(--teal);text-align:center;line-height:1.4;}
+.fa{font-size:13pt;font-weight:900;color:var(--teal);}
+
+/* FEE TABLE */
+.fee3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2.5mm;margin-bottom:2.5mm;}
+.fm{border-radius:9px;padding:2.5mm 3mm;text-align:center;border:2px solid;}
+.fm-y{background:#fff8e1;border-color:#ffe082;}
+.fm-p{background:var(--pink2);border-color:#f48fb1;}
+.fm-b{background:var(--sky);border-color:#90caf9;}
+.fm-g{background:var(--grn2);border-color:#a5d6a7;}
+.fml{font-size:7pt;font-weight:800;margin-bottom:.8mm;}
+.fmv{font-family:'Nunito',sans-serif;font-size:13pt;font-weight:900;line-height:1;}
+.fmn{font-size:6.5pt;color:var(--sub);margin-top:.8mm;line-height:1.5;}
+
+.stbl{width:100%;border-collapse:collapse;font-size:8.5pt;}
+.stbl th{background:linear-gradient(90deg,#bf360c,#ffa000);color:white;font-weight:900;padding:2mm;text-align:center;font-size:8pt;}
+.stbl td{padding:1.8mm 2mm;text-align:center;border:1px solid #eceff1;font-weight:700;}
+.stbl .r1 td{background:#fff8e1;}
+.stbl .r0 td{background:white;}
+.stbl .rlast td{background:var(--grn2);font-weight:900;color:var(--green);font-size:9pt;}
+.stbl-n{font-size:6.5pt;color:var(--sub);margin-top:1.5mm;line-height:1.7;}
+
+/* PLATFORM DIVIDER */
+.plat-div{display:flex;align-items:center;gap:2mm;padding:1.5mm 3.5mm;font-size:8pt;font-weight:900;}
+.plat-div-pur{background:var(--pur2);color:var(--pur);}
+.plat-div-teal{background:var(--teal2);color:var(--teal);}
+
+/* FUND TAGS */
+.ftag{display:flex;gap:1.5mm;margin-bottom:1.5mm;flex-wrap:wrap;}
+.tag{display:inline-block;font-size:6.5pt;font-weight:900;padding:.5mm 2mm;border-radius:20px;}
+.tc{background:var(--navy);color:white;}
+.tr3{background:var(--coral);color:white;}
+.tr4{background:#d84315;color:white;}
+.tr1{background:var(--teal);color:white;}
+.ta{background:var(--sun);color:var(--navy);border:1.5px solid #ffb300;}
+.tw{background:#e8eaf6;color:var(--indigo);border:1.5px solid #9fa8da;}
+.fname{font-size:9pt;font-weight:900;color:var(--navy);line-height:1.4;margin-bottom:1.5mm;}
+.frow{display:flex;justify-content:space-between;font-size:8pt;padding:1mm 0;border-bottom:1px dashed #eceff1;}
+.frow:last-of-type{border-bottom:none;}
+.fl{color:var(--sub);font-weight:500;}.fv{font-weight:800;}
+
+/* PULLBACK PILL */
+.pbpill{margin-top:2mm;border-radius:9px;overflow:hidden;border:2px solid #9fa8da;}
+.pb-section{padding:2mm 3mm 1.5mm;}
+.pb-fixed{background:#e8eaf6;border-bottom:1.5px dashed #9fa8da;}
+.pb-irreg{background:#fff3e0;border-bottom:1.5px dashed #ffcc80;}
+.pb-year{background:#e8f5e9;border-bottom:1.5px dashed #a5d6a7;}
+.pb-title{font-size:6.5pt;font-weight:900;margin-bottom:1.5mm;display:flex;align-items:center;gap:1.5mm;}
+.pb-title.t-fix{color:var(--indigo);}
+.pb-title.t-irr{color:#e65100;}
+.pb-title.t-yr{color:var(--green);}
+.pb-row{font-size:7.5pt;line-height:1.7;font-weight:700;}
+.pb-row.r-fix{color:var(--pur);}
+.pb-row.r-irr{color:#bf360c;}
+.pb-row.r-yr{color:var(--green);}
+.pb-note{font-size:6pt;color:var(--sub);padding:1.5mm 3mm;background:#f5f7fa;line-height:1.5;}
+
+/* WARN STAR */
+.warn-star{font-size:6.5pt;color:var(--sub);padding:2mm 3.5mm;background:#f5f7fa;border-top:1.5px dashed var(--bdr);line-height:1.8;}
+
+/* SC */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;margin-top:2mm;}
+.sc{border-radius:9px;padding:2.5mm 3mm;border:2px solid;}
+.sc-b{background:var(--sky);border-color:#90caf9;}
+.sc-p{background:var(--pink2);border-color:#f48fb1;}
+.sc-t{background:var(--teal2);border-color:#80deea;}
+.sc-u{background:var(--pur2);border-color:#ce93d8;}
+.sc-t2{font-size:8pt;font-weight:900;margin-bottom:1mm;display:flex;align-items:center;gap:1mm;}
+.sc-c{font-size:8pt;line-height:1.65;}
+
+/* FOOTER */
+.footer{display:flex;align-items:center;justify-content:space-between;border-top:2px dashed var(--bdr);padding-top:3mm;margin-top:8mm;}
+.fbrand{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:12pt;font-weight:900;color:var(--navy);border-left:5px solid var(--sun);padding-left:2.5mm;}
+.fnotice{font-size:7pt;color:var(--sub);font-weight:700;}
+</style>
+
+<style id="site-nav-style">
+  .site-top-nav{
+    position:sticky; top:0; z-index:9999; display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 14px; background:rgba(15,23,42,.92); color:#fff; backdrop-filter: blur(8px);
+    font-family:"Noto Sans TC", system-ui, sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.12);
+  }
+  .site-top-nav .site-nav-left{display:flex; align-items:center; gap:10px; min-width:0;}
+  .site-top-nav .site-dot{width:10px; height:10px; border-radius:50%; background:#22c55e; flex-shrink:0;}
+  .site-top-nav .site-title{font-size:14px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .site-top-nav .site-links{display:flex; gap:8px; flex-wrap:wrap;}
+  .site-top-nav a{
+    text-decoration:none; color:#0f172a; background:#fff; border-radius:999px; padding:8px 12px; font-size:13px; font-weight:800;
+  }
+  @media (max-width:640px){
+    .site-top-nav{padding:10px 12px; align-items:flex-start; flex-direction:column;}
+    .site-top-nav .site-links{width:100%;}
+    .site-top-nav a{flex:1; text-align:center;}
+  }
+</style>
+
+<style id="site-mobile-tweak">
+  @media (max-width: 768px) {
+    body { font-size: 16px !important; }
+    .page, .main, .wrap, .container { padding-left: 12px !important; padding-right: 12px !important; }
+    table { display: block; width: 100% !important; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="site-top-nav">
+  <div class="site-nav-left">
+    <span class="site-dot"></span>
+    <div class="site-title">信鑫滿滿｜銀專快查版</div>
+  </div>
+  <div class="site-links">
+    <a href="index.html">回首頁</a>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ▌HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="logo">台壽</div>
+    <div class="hdr-text">
+      <div class="h-pre">TAIWAN LIFE · 投資型保險專案</div>
+      <div class="h-main">信鑫滿滿 💰</div>
+      <div class="h-sub">壽險 ／ 年金 · 台幣 ／ 美元 · 全權委託帳戶 · 資產撥回</div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-top:1.5mm;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,.13);border:1.5px dashed rgba(255,255,255,.5);border-radius:8px;padding:1.5mm 3mm;display:inline-flex;align-items:center;gap:2mm;">
+          <span style="font-size:6pt;font-weight:900;color:rgba(255,255,255,.7);letter-spacing:1px;">手收</span>
+          <span style="width:1px;height:10px;background:rgba(255,255,255,.3);"></span>
+          <span style="font-size:7.5pt;font-weight:900;color:var(--sun);">💵 外幣 7.72%</span>
+          <span style="font-size:7.5pt;color:rgba(255,255,255,.4);">｜</span>
+          <span style="font-size:7.5pt;font-weight:900;color:#a5d6a7;">🇹🇼 台幣 5.95%</span>
+          <span style="background:var(--sun);color:var(--navy);border-radius:20px;padding:.3mm 1.8mm;font-size:5.8pt;font-weight:900;">💳 可刷卡</span>
+        </div>
+        <div class="h-tag">📎 訓練教材 · 僅供內部使用</div>
+      </div>
+    </div>
+  </div>
+  <div class="hdr-badges">
+    <div style="text-align:right;z-index:1;">
+      <div style="font-size:6pt;font-weight:900;color:rgba(255,255,255,.6);letter-spacing:2px;margin-bottom:1.5mm;">手　收</div>
+      <div style="display:flex;flex-direction:column;gap:2mm;">
+        <div style="background:var(--sun);border-radius:11px;padding:2.5mm 5mm;box-shadow:0 3px 12px rgba(255,193,7,.5);text-align:center;">
+          <div style="font-size:6pt;font-weight:900;color:var(--navy);letter-spacing:1px;margin-bottom:.5mm;">💵 外幣</div>
+          <div style="font-family:'Nunito',sans-serif;font-size:26pt;font-weight:900;color:var(--navy);line-height:1;">7.72%</div>
+        </div>
+        <div style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);border-radius:11px;padding:2mm 5mm;text-align:center;">
+          <div style="font-size:6pt;font-weight:900;color:rgba(255,255,255,.75);letter-spacing:1px;margin-bottom:.5mm;">🇹🇼 台幣　<span style="background:var(--sun);color:var(--navy);border-radius:20px;padding:.2mm 2mm;font-size:5.8pt;">💳 可刷卡</span></div>
+          <div style="font-family:'Nunito',sans-serif;font-size:22pt;font-weight:900;color:white;line-height:1;">5.95%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▌FEATURES -->
+<div class="feats">
+  <div class="feat f1"><div class="fem">🔄</div><div class="ftxt">特色①｜指定標的再投入<br><span style="font-size:7.5pt;font-weight:500;">資產撥回自動再投資，複利效果</span></div></div>
+  <div class="feat f2"><div class="fem">🎯</div><div class="ftxt">特色②｜零費用門檻<br><span style="font-size:7.5pt;font-weight:500;">台幣800萬以上保費費用率0%</span></div></div>
+  <div class="feat f3"><div class="fem">🏦</div><div class="ftxt">特色③｜委託投資帳戶<br><span style="font-size:7.5pt;font-weight:500;">專家代操・月月資產撥回</span></div></div>
+</div>
+
+<!-- ▌投保規則 -->
+<div class="sec">📋 投保規則一覽</div>
+<div class="card c-ind mb">
+  <div class="ch ch-ind"><i>📋</i><div class="ch-t">承保基本資料</div></div>
+  <div class="cb">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+      <div style="padding-right:3mm;border-right:1.5px dashed #e8ecf0;">
+        <div class="row"><div class="rl">壽險投保年齡</div><div class="rv hl">16 ～ 79 足歲</div></div>
+        <div class="row"><div class="rl">年金投保年齡</div><div class="rv hl">0 ～ 74 足歲</div></div>
+        <div class="row"><div class="rl">最低保費（首期）</div><div class="rv hl">台幣 30萬 ／ 美元 1萬</div></div>
+        <div class="row"><div class="rl">第一期後每次</div><div class="rv hl">台幣 3萬 ／ 美元 1,000</div></div>
+        <div class="row"><div class="rl">最低投保金額</div><div class="rv pur">台幣 28萬（含）／ 美元 8,000（含）</div></div>
+      </div>
+      <div style="padding-left:3mm;">
+        <div class="row"><div class="rl">累計最高保費</div><div class="rv">台幣 1.5億 ／ 美元 500萬<br><span style="font-size:7pt;color:var(--sub);">且保額不超過累計繳費×20倍</span></div></div>
+        <div class="row"><div class="rl">繳費方式</div><div class="rv" style="font-size:8pt;">自行匯款 ／ 金融機構轉帳（首期）<br>信用卡（首期，限台幣商品）</div></div>
+        <div class="row"><div class="rl">審閱期</div><div class="rv">契約訂立前 <b>3日</b>審閱期</div></div>
+        <div class="row"><div class="rl">注意事項</div><div class="rv warn" style="font-size:8pt;">🚫 美・加・日籍不得為要保人<br>🚫 不得附加附約<br>🚫 壽險平台不得申請型別轉換</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▌保費費用 -->
+<div class="sec">💴 各項費用一覽</div>
+<div class="card c-amb mb">
+  <div class="ch ch-amb"><i>💴</i><div class="ch-t">費用總覽</div></div>
+  <div class="cb">
+    <div style="font-size:8pt;font-weight:900;color:var(--sub);margin-bottom:2mm;">📌 一、保費費用（交付保費時收取）</div>
+    <div class="fee3" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:3mm;">
+      <div class="fm fm-p">
+        <div class="fml" style="color:var(--pink);">台幣 500萬以下<br>美元 166,500以下</div>
+        <div class="fmv" style="color:#c62828;">1.50%</div>
+        <div class="fmn">保費費用率</div>
+      </div>
+      <div class="fm fm-y">
+        <div class="fml" style="color:var(--amb);">台幣 500～800萬<br>美元 166,500～266,500</div>
+        <div class="fmv" style="color:var(--amb);">1.00%</div>
+        <div class="fmn">保費費用率</div>
+      </div>
+      <div style="border-radius:9px;border:3px solid var(--green);background:var(--grn2);padding:2.5mm 3mm;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#43a047,#1b5e20);"></div>
+        <div style="font-size:7pt;font-weight:800;color:var(--green);margin-bottom:.5mm;">台幣 800萬（含）以上<br>美元 266,500（含）以上</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:22pt;font-weight:900;color:var(--green);line-height:1.1;">0%</div>
+        <div style="display:inline-block;background:var(--green);color:white;border-radius:20px;padding:.8mm 3mm;font-size:7.5pt;font-weight:900;margin-top:1mm;">🎉 保費費用完全免收！</div>
+      </div>
+    </div>
+    <div style="font-size:8pt;font-weight:900;color:var(--sub);margin-bottom:2mm;">📌 二、解約 ／ 部分提領費用</div>
+    <table class="stbl">
+      <thead>
+        <tr><th>費用項目</th><th>第1年</th><th>第2年</th><th>第3年</th><th>第4年</th><th style="background:linear-gradient(90deg,#1b5e20,#43a047);font-size:9pt;">第5年（含）起 🎉</th></tr>
+      </thead>
+      <tbody>
+        <tr class="r1"><td style="text-align:left;padding-left:3mm;font-weight:800;">🚪 解約費用率</td><td>7%</td><td>6%</td><td>5%</td><td>3%</td><td style="background:#c8e6c9;color:var(--green);font-size:11pt;font-weight:900;border:2px solid var(--green);">0% 🎉</td></tr>
+        <tr class="rlast"><td style="text-align:left;padding-left:3mm;font-weight:800;">💸 部分提領費用率</td><td>7%</td><td>6%</td><td>5%</td><td>3%</td><td style="background:#c8e6c9;color:var(--green);font-size:11pt;font-weight:900;border:2px solid var(--green);">0% 🎉</td></tr>
+      </tbody>
+    </table>
+    <div class="stbl-n">
+      📌 費用基數＝保單帳戶價值 − 資金停泊帳戶之投資標的價值<br>
+      📌 投資標的之經理費、保管費已反應於單位淨值，台灣人壽未另行收取<br>
+      📌 每年提供 <b>12次免費</b>投資標的轉換，第13次起每次台幣500元 ／ 美元15元
+    </div>
+  </div>
+</div>
+
+<!-- ▌保障內容 -->
+<div class="sec">🛡️ 保障內容</div>
+<div class="grid2">
+  <!-- 壽險平台 -->
+  <div class="card c-pur">
+    <div class="ch ch-pur"><i>🏛️</i><div class="ch-t">壽險平台</div></div>
+    <div class="cb">
+      <div class="ib ib-u" style="margin-bottom:2mm;">
+        <b>★ 身故 ／ 完全失能保險金</b><br>
+        被保人身故或達完全失能等級之一，給付身故保險金（或喪葬費用保險金），並返還保單帳戶價值。
+      </div>
+      <div class="ib ib-u">
+        <b>★ 祝壽保險金</b><br>
+        被保人達 <b>111歲</b> 保單週年日仍生存且契約有效，給付淨危險保額與保單帳戶價值之總和，契約效力即行終止。
+      </div>
+      <div style="font-size:6.5pt;color:var(--sub);margin-top:2mm;line-height:1.6;">
+        ※ 訂立本保險契約時，以受監護宣告尚未撤銷者為被保險人，僅限投保甲型。<br>
+        ※ 同時有兩項以上完全失能時，台灣人壽僅給付一項完全失能保險金。
+      </div>
+    </div>
+  </div>
+  <!-- 年金平台 -->
+  <div class="card c-teal">
+    <div class="ch ch-teal"><i>🌅</i><div class="ch-t">年金平台</div></div>
+    <div class="cb">
+      <div class="ib ib-t" style="margin-bottom:2mm;">
+        <b>★ 年金給付</b><br>
+        被保人於年金給付開始日生存：<br>
+        ① <b>一次給付</b>：年金累積期滿日之次一個資產評價日計算之保單帳戶價值，一次給付受益人，契約終止。<br>
+        ② <b>分期給付</b>：生存期間依約定分期給付年金，最高給付年齡以被保人保險年齡達 <b>110歲</b> 為止（保證期間內不在此限）。
+      </div>
+      <div class="ib ib-g">
+        <b>★ 返還保單帳戶價值</b><br>
+        年金給付開始日前，被保人身故，依規定申請後次一個資產評價日計算之保單帳戶價值，返還予要保人或其他應得之人，契約終止。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▌全權委託標的 -->
+<div class="sec">🌐 全권委託投資帳戶標的（依台灣人壽公告）</div>
+<div class="card c-pur mb">
+  <div class="ch ch-pur"><i>📊</i><div class="ch-t">全권委託投資帳戶標的完整列示</div><div style="margin-left:auto;font-size:6.5pt;opacity:.85;">資料來源：taiwanlife.com　｜　撥回率非固定・撥回來源可能為本金</div></div>
+
+  <!-- 美元標的 RR3 -->
+  <div style="padding:2.5mm 3.5mm 1mm;font-size:8pt;font-weight:900;color:var(--pur);">💵 美元標的（RR3）</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1.5px dashed var(--bdr);">
+
+    <!-- M020 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M020</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">富達－全球趨勢先機<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託當達投信投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 25 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.25</b> → 每單位撥回 <b>0.04167</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-year">
+          <div class="pb-title t-yr">📆 每年定期撥回</div>
+          <div class="pb-row r-yr">基準日：<b>每年 12 月 24 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-yr">條件：當日單位淨值 <b>≥ 10.25</b> → 每單位撥回 <b>0.04167</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M021 -->
+    <div style="padding:2.5mm 3mm;border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M021</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">貝萊德－前瞻機會<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託貝萊德投信投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 10 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.25</b> → 每單位撥回 <b>0.1</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M023 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M023</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">柏瑞－動態對策<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託柏瑞投信投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 25 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>> 10.3</b> → 每單位撥回 <b>0.05</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M024 -->
+    <div style="padding:2.5mm 3mm;border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M024</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">元大－全情境動態配置<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託元大投信投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 25 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04583</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.3</b> → 每單位撥回 <b>0.0515</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M025 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M025</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">國泰－智慧多元收益 PLUS<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託國泰投信投資帳戶（每月10日）</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 10 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>> 10.3</b> → 每單位撥回 <b>0.1</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M026 -->
+    <div style="padding:2.5mm 3mm;border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M026</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">國泰－智慧多元收益 PLUS<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託國泰投信投資帳戶（每月20日）</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 20 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>> 10.3</b> → 每單位撥回 <b>0.1</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M027 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M027</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">中信－TOP雙高優質防護<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託中國信託投信投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 25 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.2</b> → 每單位撥回 <b>0.02</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M030 -->
+    <div style="padding:2.5mm 3mm;border-bottom:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M030</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span></div>
+      <div class="fname">霸菱－優質精選組合<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託霸菱投顧投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 5 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.3</b> → 每單位撥回 <b>0.04</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- M032 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M032</span><span class="tag tr3">RR3</span><span class="tag ta">⚡ 資產撥回</span><span class="tag tw">💵 美元</span><span style="display:inline-block;font-size:6.5pt;font-weight:900;padding:.5mm 2mm;border-radius:20px;background:#fff3e0;color:#e65100;border:1.5px solid #ffcc80;">🆕 新商品</span></div>
+      <div class="fname">聯博－全球智選<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託聯博投信投資帳戶</span></div>
+      <div class="pbpill">
+        <div class="pb-section pb-fixed">
+          <div class="pb-title t-fix">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix">基準日：<b>每月 24 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.25</b> → 每單位撥回 <b>0.04167</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-year">
+          <div class="pb-title t-yr">📆 每年定期撥回</div>
+          <div class="pb-row r-yr">基準日：<b>每年 12 月 24 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-yr">條件：當日單位淨值 <b>≥ 10.25</b> → 每單位撥回 <b>0.04167</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 撥回來源可能為本金，非保證收益　※ 🆕 紅字新商品</div>
+      </div>
+    </div>
+
+    <!-- 說明格 -->
+    <div style="padding:2.5mm 3mm;background:#fafafa;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;color:var(--sub);font-size:7.5pt;line-height:1.8;">
+        📌 M020–M030・M032<br>全部為美元計價・RR3<br>月月定期撥回為主<br>撥回率與金額<b>非固定</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- 台幣標的 RR4 -->
+  <div style="padding:2.5mm 3.5mm 1mm;font-size:8pt;font-weight:900;color:var(--teal);border-top:2px dashed var(--bdr);">🇹🇼 台幣標的（RR4）— 唯一台幣全委標的</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1.5px dashed var(--bdr);">
+
+    <!-- M031 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">M031</span><span class="tag tr4">RR4</span><span class="tag ta">⚡ 資產撥回</span><span style="display:inline-block;font-size:6.5pt;font-weight:900;padding:.5mm 2mm;border-radius:20px;background:var(--teal2);color:var(--teal);border:1.5px solid #80deea;">🇹🇼 台幣</span></div>
+      <div class="fname">安聯投信－台灣 A+<br><span style="font-size:7.5pt;font-weight:500;color:var(--sub);">台灣人壽委託安聯投信投資帳戶（新臺幣）</span></div>
+      <div class="pbpill" style="border-color:#80deea;">
+        <div class="pb-section pb-fixed" style="background:#e0f7fa;border-bottom-color:#80deea;">
+          <div class="pb-title t-fix" style="color:#00695c;">🗓️ 每月定期撥回</div>
+          <div class="pb-row r-fix" style="color:var(--teal);">基準日：<b>每月 8 日</b>（遇國定假日順延）</div>
+          <div class="pb-row r-fix" style="color:var(--teal);">條件：當日單位淨值 <b>≥ 8</b> → 每單位撥回 <b>0.04167</b>　／　淨值 &lt; 8 → 不撥回</div>
+        </div>
+        <div class="pb-section pb-irreg" style="border-bottom:none;">
+          <div class="pb-title t-irr">🔍 每月不定期撥回（每月最多一次）</div>
+          <div class="pb-row r-irr">檢視方式：<b>每月每一營業日</b>均檢視，當日觸及門檻即執行（當月僅限一次）</div>
+          <div class="pb-row r-irr">條件：當日單位淨值 <b>≥ 10.2</b> → 每單位撥回 <b>0.04</b>　／　未達 → 不撥回</div>
+        </div>
+        <div class="pb-note">※ 撥回金額 = 基準日單位數 × 每單位撥回金額　※ 台幣計價・撥回來源可能為本金，非保證收益</div>
+      </div>
+    </div>
+
+    <!-- 說明格 -->
+    <div style="padding:2.5mm 3mm;background:#e0f7fa;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;color:#00695c;font-size:7.5pt;line-height:1.8;">
+        🎯 <b>M031 安聯台灣A+</b><br>本商品唯一台幣計價<br>全委標的！<br>風險等級 <b>RR4</b><br>（其餘皆為 RR3）
+      </div>
+    </div>
+  </div>
+
+  <!-- 貨幣型 / 停泊帳戶 -->
+  <div style="padding:2.5mm 3.5mm 1mm;font-size:8pt;font-weight:900;color:var(--teal);border-top:2px dashed var(--bdr);">🏦 貨幣型基金 ＆ 資金停泊帳戶（RR1）</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1.5px dashed var(--bdr);">
+
+    <!-- F203 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">F203</span><span class="tag tr1">RR1</span><span style="display:inline-block;font-size:6.5pt;font-weight:900;padding:.5mm 2mm;border-radius:20px;background:var(--teal2);color:var(--teal);border:1.5px solid #80deea;">🇹🇼 停泊</span></div>
+      <div class="fname" style="font-size:8.5pt;">台灣人壽新臺幣資金停泊帳戶</div>
+      <div style="background:var(--teal2);border:1.5px solid #80deea;border-radius:7px;padding:2mm 2.5mm;margin-top:1.5mm;font-size:7.5pt;color:#00695c;line-height:1.6;">
+        💡 <b>台幣商品資金停泊用途</b><br>無單位淨值・利率依台灣人壽公告
+      </div>
+    </div>
+
+    <!-- F201 -->
+    <div style="padding:2.5mm 3mm;border-right:1.5px dashed var(--bdr);">
+      <div class="ftag"><span class="tag tc">F201</span><span class="tag tr1">RR1</span><span style="display:inline-block;font-size:6.5pt;font-weight:900;padding:.5mm 2mm;border-radius:20px;background:#e8eaf6;color:var(--indigo);border:1.5px solid #9fa8da;">💵 停泊</span></div>
+      <div class="fname" style="font-size:8.5pt;">台灣人壽美元資金停泊帳戶（二）</div>
+      <div style="background:var(--grn2);border:1.5px solid #a5d6a7;border-radius:7px;padding:2mm 2.5mm;margin-top:1.5mm;font-size:7.5pt;color:var(--green);line-height:1.6;">
+        💡 <b>美元商品資金停泊用途</b><br>無單位淨值・利率依台灣人壽公告
+      </div>
+    </div>
+
+    <!-- FP201 / FP203 -->
+    <div style="padding:2.5mm 3mm;">
+      <div class="ftag"><span class="tag tc">FP201</span><span class="tag tr1">RR1</span></div>
+      <div class="fname" style="font-size:8pt;">台灣人壽美元貨幣帳戶（註）</div>
+      <div class="ftag" style="margin-top:4mm;"><span class="tag tc">FP203</span><span class="tag tr1">RR1</span></div>
+      <div class="fname" style="font-size:8pt;">台灣人壽新臺幣貨幣帳戶（註）</div>
+      <div style="font-size:6.5pt;color:var(--sub);margin-top:1.5mm;line-height:1.5;">
+        ※ 貨幣帳戶僅接受符合條件要保人<br>指定欲配置或轉入之投資標的<br>尚未成立，且配置日或轉入日<br>為該標的成立日之前之情形時投入。
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-star">
+    📌 全權委託帳戶資產撥回前先扣除行政管理費用。　
+    📌 資產撥回金額 = 撥回基準日之單位數 × 每單位撥回金額，撥回來源可能為本金，可能導致原始投資金額減損。　
+    📌 本商品所連結投資標的無保本機制，最大可能損失為全部投資本金。　
+    📌 ※標示之標的，保單帳戶資產撥回前先扣除行政管理費。
+  </div>
+</div>
+
+<!-- ▌撥回機制說明 -->
+<div class="sec">🔄 資產撥回機制說明</div>
+<div class="card c-grn mb">
+  <div class="ch ch-grn"><i>🔄</i><div class="ch-t">撥回機制重點整理</div></div>
+  <div class="cb">
+    <div class="sc-grid">
+      <div class="sc sc-u">
+        <div class="sc-t2" style="color:var(--pur);">📊 撥回頻率種類</div>
+        <div class="sc-c">
+          ① <b>每月定期撥回</b>：每月固定基準日（各標的不同，8～25日），符合條件即撥回<br>
+          ② <b>每月不定期撥回</b>：每月每一營業日檢視，當日達撥回條件即撥回（每月最多一次）<br>
+          ③ <b>每年定期撥回</b>：M020、M032 額外設有每年12月24日之年定期撥回機制
+        </div>
+      </div>
+      <div class="sc sc-b">
+        <div class="sc-t2" style="color:var(--blue);">✅ 撥回條件邏輯</div>
+        <div class="sc-c">
+          · <b>月定期</b>：固定基準日，淨值 <b>≥ 8</b> 即觸發，每單位約撥 <b>0.04～0.046</b><br>
+          · <b>月不定期</b>：每月每一營業日均檢視，淨值達高門檻（10.2～10.3）即執行，<b>當月最多一次</b>，撥回金額較大<br>
+          · 不符合條件當月：<b>不進行資產撥回</b>（非固定配息）
+        </div>
+      </div>
+      <div class="sc sc-t">
+        <div class="sc-t2" style="color:var(--teal);">🔄 指定標的再投入</div>
+        <div class="sc-c">
+          撥回之資金可依要保人選擇，<b>自動再投入指定投資標的</b>（本商品特色①），達到複利滾存效果。未指定則撥入資金停泊帳戶。
+        </div>
+      </div>
+      <div class="sc sc-p">
+        <div class="sc-t2" style="color:var(--pink);">⚠️ 重要提醒</div>
+        <div class="sc-c">
+          · 資產撥回<b>來源可能為本金</b>，非保證收益<br>
+          · 撥回率及撥回金額<b>非固定</b>，依帳戶資產實際運作決定<br>
+          · 撥回前先扣除<b>行政管理費用</b><br>
+          · 若帳戶公告最低金額不足，次收益分配金額或資產撥回金額將改以投入資金停泊帳戶方式處理
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="fbrand">台壽 · 信鑫滿滿</div>
+  <div class="fnotice">📎 訓練教材・僅供內部使用，不得自行刪改、摘錄或轉寄其中文字。　資料以台灣人壽官方公告為準。</div>
+</div>
+
+</div>
+</body>
+</html>

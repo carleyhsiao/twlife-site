@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>保富人生｜理專快查版</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#1a237e;--blue:#1565c0;--sky:#e3f2fd;
+  --sun:#ffca28;--sun2:#fff9c4;--coral:#ff5722;
+  --pink:#e91e8c;--pink2:#fce4ec;
+  --teal:#00838f;--teal2:#e0f7fa;
+  --green:#2e7d32;--grn2:#e8f5e9;
+  --amb:#ef6c00;--pur:#5e35b1;
+  --sub:#546e7a;--bdr:#cfd8dc;--text:#1a1a2e;
+}
+
+html,body{font-family:'Noto Sans TC',sans-serif;color:var(--text);background:#f0f4f8;font-size:15px;line-height:1.5;}
+
+.page{max-width:900px;margin:0 auto;padding:16px;background:linear-gradient(155deg,#e8f5e9 0%,#fffde7 48%,#e3f2fd 100%);min-height:100vh;}
+
+/* ── UPDATE BAR ── */
+.update-bar{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#0d1b6b,#1565c0);border-radius:12px;padding:10px 16px;margin-bottom:16px;color:white;flex-wrap:wrap;}
+.update-btn{display:flex;align-items:center;gap:6px;background:var(--sun);color:var(--navy);border:none;border-radius:8px;padding:8px 16px;font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+
+.update-status{font-size:13px;opacity:.9;flex:1;min-width:200px;}
+.update-time{font-size:12px;opacity:.65;white-space:nowrap;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(26,35,126,.3);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav-flash{animation:flash .5s ease 2;}
+@keyframes flash{0%,100%{background:inherit}50%{background:rgba(255,202,40,.3)}}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(130deg,#0d1b6b 0%,#1e3fa5 55%,#1976d2 100%);border-radius:16px;padding:16px 20px;margin-bottom:16px;box-shadow:0 5px 20px rgba(13,27,107,.3);position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05);top:-20px;right:80px;}
+.hdr-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+.logo{width:48px;height:48px;background:var(--sun);border-radius:45% 55% 50% 50%/40% 45% 55% 60%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--navy);flex-shrink:0;z-index:1;}
+.hdr-text{color:white;z-index:1;min-width:0;}
+.h-pre{font-size:11px;opacity:.7;letter-spacing:2px;font-weight:700;}
+.h-main{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;line-height:1.1;}
+.h-sub{font-size:12px;opacity:.85;font-weight:700;margin-top:2px;}
+.h-tag{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);border:1px dashed rgba(255,255,255,.45);color:white;padding:2px 8px;border-radius:20px;}
+.yield-bx{background:var(--sun);border-radius:12px;padding:10px 18px;text-align:center;box-shadow:0 3px 12px rgba(255,193,7,.45);border:2px solid rgba(255,255,255,.6);z-index:1;flex-shrink:0;}
+.yb-lbl{font-size:12px;font-weight:900;color:var(--navy);letter-spacing:1px;}
+.yb-num{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;color:var(--navy);line-height:1;}
+
+/* ── FEATURES ── */
+.feats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.feat{flex:1;min-width:200px;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;border:2px solid transparent;}
+.f1{background:var(--sky);border-color:#90caf9;}
+.f2{background:var(--sun2);border-color:#ffe082;}
+.f3{background:var(--grn2);border-color:#a5d6a7;}
+.fem{font-size:22px;flex-shrink:0;line-height:1;}
+.ftxt{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:14px;font-weight:900;color:var(--navy);line-height:1.3;}
+
+/* ── SEC TITLE ── */
+.sec{display:flex;align-items:center;gap:10px;margin:20px 0 10px;font-family:'Nunito','Noto Sans TC',sans-serif;font-size:17px;font-weight:900;color:var(--navy);border-left:5px solid var(--sun);padding-left:10px;}
+
+/* ── GRID ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.mb{margin-bottom:14px;}
+
+/* ── CARD ── */
+.card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);border:2px solid transparent;}
+.c-blue{border-color:#90caf9;}.c-teal{border-color:#80deea;}.c-pink{border-color:#f48fb1;}
+.c-amb{border-color:#ffd54f;}.c-pur{border-color:#ce93d8;}
+
+.ch{padding:10px 14px;display:flex;align-items:center;gap:8px;color:white;flex-wrap:wrap;}
+.ch-blue{background:linear-gradient(90deg,#1565c0,#2196f3);}
+.ch-teal{background:linear-gradient(90deg,#00695c,#26c6da);}
+.ch-pink{background:linear-gradient(90deg,#880e4f,#e91e8c);}
+.ch-amb{background:linear-gradient(90deg,#bf360c,#ffa000);}
+.ch-pur{background:linear-gradient(90deg,#4527a0,#9c27b0);}
+.ch i{font-size:16px;font-style:normal;}
+.ch-t{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:15px;font-weight:900;}
+.ch-sub{margin-left:auto;font-size:11px;opacity:.8;}
+.cb{padding:12px 16px;}
+
+/* ── ROWS ── */
+.row{display:flex;align-items:flex-start;padding:8px 0;border-bottom:1.5px dashed #e8ecf0;gap:10px;}
+.row:last-child{border-bottom:none;}
+.rl{font-size:12px;color:var(--sub);font-weight:700;min-width:80px;flex-shrink:0;padding-top:1px;}
+.rv{font-size:14px;font-weight:700;flex:1;line-height:1.5;}
+.hl{color:var(--blue);}.warn{color:var(--coral);}.ok{color:var(--green);}
+
+/* ──承保 2-COL INNER GRID ── */
+.inner2{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.inner2 > div:first-child{padding-right:12px;border-right:1.5px dashed #e8ecf0;}
+.inner2 > div:last-child{padding-left:12px;}
+
+/* ── INFO BOXES ── */
+.ib{border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:13px;line-height:1.7;}
+.ib:last-child{margin-bottom:0;}
+.ib-b{background:var(--sky);border:1.5px solid #90caf9;color:var(--blue);}
+.ib-b b{color:var(--navy);}
+.ib-t{background:var(--teal2);border:1.5px solid #80deea;color:#00695c;}
+.ib-t b{color:var(--teal);}
+.ib-p{background:var(--pink2);border:1.5px dashed #f48fb1;color:#ad1457;}
+.ib-p b{color:var(--pink);}
+.ib-w{background:#fff8e1;border:1.5px solid #ffe082;color:#e65100;}
+
+/* ── CHIPS ── */
+.chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:800;border:2px solid;margin:2px;}
+.chip-b{background:var(--sky);border-color:#90caf9;color:var(--blue);}
+.chip-t{background:var(--teal2);border-color:#80deea;color:var(--teal);}
+
+/* ── FLOW ── */
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0;}
+.fb{background:white;border:2px solid var(--teal);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:800;color:var(--teal);text-align:center;line-height:1.4;}
+.fa{font-size:18px;font-weight:900;color:var(--teal);}
+.fpink .fb{border-color:var(--pink);color:var(--pink);}
+.fpink .fa{color:var(--pink);}
+.fres{background:var(--pink2);border:2px solid var(--pink);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:900;color:var(--pink);text-align:center;line-height:1.4;}
+
+/* ── SCENARIO ── */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.sc{border-radius:10px;padding:10px 12px;border:2px solid;}
+.sc-b{background:var(--sky);border-color:#90caf9;}
+.sc-p{background:var(--pink2);border-color:#f48fb1;}
+.sc-t{background:var(--teal2);border-color:#80deea;}
+.sc-t2{font-size:13px;font-weight:900;margin-bottom:4px;}
+.sc-c{font-size:12px;line-height:1.65;}
+
+/* ── FEE CARDS ── */
+.fee3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.fm{border-radius:10px;padding:12px;text-align:center;border:2px solid;}
+.fm-y{background:#fff8e1;border-color:#ffe082;}
+.fm-p{background:var(--pink2);border-color:#f48fb1;}
+.fm-b{background:var(--sky);border-color:#90caf9;}
+.fml{font-size:12px;font-weight:800;margin-bottom:4px;}
+.fmv{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;line-height:1;}
+.fmn{font-size:11px;color:var(--sub);margin-top:4px;line-height:1.5;}
+
+/* ── SURRENDER TABLE ── */
+.stbl{width:100%;border-collapse:collapse;font-size:13px;}
+.stbl th{background:linear-gradient(90deg,#bf360c,#ffa000);color:white;font-weight:900;padding:8px 6px;text-align:center;font-size:12px;}
+.stbl td{padding:7px 6px;text-align:center;border:1px solid #eceff1;font-weight:700;}
+.stbl .r1 td{background:#fff8e1;}
+.stbl .rlast td{background:var(--grn2);font-weight:900;color:var(--green);}
+.stbl-n{font-size:11px;color:var(--sub);margin-top:8px;line-height:1.7;}
+
+/* ── FUNDS GRID ── */
+.fund-group-title{padding:10px 16px 4px;font-size:13px;font-weight:900;}
+.funds-rr3{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.funds-rr1{display:grid;grid-template-columns:1fr 1fr;}
+.fcol{padding:12px 14px;border-right:1.5px dashed var(--bdr);border-bottom:1.5px dashed var(--bdr);}
+.fcol:last-child{border-right:none;}
+.fcol.no-bottom{border-bottom:none;}
+.ftag{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.tag{display:inline-block;font-size:11px;font-weight:900;padding:2px 8px;border-radius:20px;}
+.tc{background:var(--navy);color:white;}
+.tr{background:var(--coral);color:white;}
+.ta{background:var(--sun);color:var(--navy);border:1.5px solid #ffb300;}
+.fname{font-size:14px;font-weight:900;color:var(--navy);line-height:1.4;margin-bottom:8px;}
+.frow{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:5px 0;border-bottom:1px dashed #eceff1;}
+.frow:last-of-type{border-bottom:none;}
+.fl{color:var(--sub);font-weight:500;}
+.fv{font-weight:800;}
+.ypill{margin-top:8px;background:linear-gradient(135deg,var(--sun2),#fffde7);border:2px solid #ffa000;border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.yp-e{font-size:11px;font-weight:800;color:var(--amb);}
+.yp-n{font-size:10px;color:var(--sub);margin-top:2px;}
+.yp-r{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--amb);line-height:1;}
+.rr1-box{background:var(--teal2);border:1.5px solid #80deea;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:#00695c;line-height:1.6;}
+.rr1-box.green{background:var(--grn2);border-color:#a5d6a7;color:var(--green);}
+.fund-footer{font-size:11px;color:var(--sub);padding:10px 16px;background:#f5f7fa;border-top:1.5px dashed var(--bdr);line-height:1.7;}
+.furl{display:inline-block;font-size:12px;color:var(--blue);background:var(--sky);border:1.5px solid #90caf9;border-radius:8px;padding:6px 12px;text-decoration:none;margin:8px 16px 4px;}
+
+/* ── FOOTER ── */
+.footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:2px dashed var(--bdr);padding-top:12px;margin-top:32px;}
+.fbrand{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:16px;font-weight:900;color:var(--navy);border-left:5px solid var(--sun);padding-left:10px;}
+.fnotice{font-size:12px;color:var(--sub);font-weight:700;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:640px){
+  .page{padding:10px;}
+  .hdr{padding:12px 14px;}
+  .h-main{font-size:22px;}
+  .yield-bx{padding:8px 12px;}
+  .yb-num{font-size:24px;}
+  .feats{flex-direction:column;}
+  .feat{min-width:unset;}
+  .grid2{grid-template-columns:1fr;}
+  .inner2{grid-template-columns:1fr;}
+  .inner2>div:first-child{padding-right:0;border-right:none;border-bottom:1.5px dashed #e8ecf0;padding-bottom:8px;margin-bottom:4px;}
+  .inner2>div:last-child{padding-left:0;}
+  .sc-grid{grid-template-columns:1fr;}
+  .fee3{grid-template-columns:1fr 1fr;gap:8px;}
+  .funds-rr3{grid-template-columns:1fr;}
+  .funds-rr1{grid-template-columns:1fr;}
+  .fcol{border-right:none !important;}
+  .stbl{font-size:11px;}
+  .stbl th,.stbl td{padding:5px 3px;}
+  .update-bar{flex-direction:column;align-items:flex-start;}
+  .update-status{min-width:unset;}
+  .flow{gap:6px;}
+}
+@media(max-width:400px){
+  .fee3{grid-template-columns:1fr;}
+  .h-main{font-size:18px;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── NAV LINK BAR ── -->
+<div class="update-bar">
+  <a class="update-btn" href="https://www.taiwanlife.com/target-overview" target="_blank">
+    📊 查詢最新淨值 ＆ 配息
+  </a>
+  <div class="update-status">淨值資料每日台灣時間 08:00 自動更新・資料來源：MoneyDJ</div>
+  <div style="font-size:11px;opacity:.65;white-space:nowrap;" id="lastUpdate">資料載入中…</div>
+</div>
+
+<!-- ── HEADER ── -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="logo">台壽</div>
+    <div class="hdr-text">
+      <div class="h-pre">TAIWAN LIFE · 外幣變額年金保險</div>
+      <div class="h-main">保富人生 ✨</div>
+      <div class="h-sub">躉繳 · 美元計價 · 月月配息 · 退休好幫手</div>
+      <div class="h-tag">📎 訓練教材 · 僅供內部使用</div>
+    </div>
+  </div>
+  <div class="yield-bx">
+    <div class="yb-lbl">收益</div>
+    <div class="yb-num">5.5%</div>
+  </div>
+</div>
+
+<!-- ── FEATURES ── -->
+<div class="feats">
+  <div class="feat f1"><div class="fem">🛡️</div><div class="ftxt">商品特色 1｜身故保證給付</div></div>
+  <div class="feat f2"><div class="fem">📊</div><div class="ftxt">商品特色 2｜月月配息 · 資產撥回</div></div>
+  <div class="feat f3"><div class="fem">🌅</div><div class="ftxt">商品特色 3｜樂活退休準備</div></div>
+</div>
+
+<!-- ── 承保基本資料 ── -->
+<div class="sec">📋 承保基本資料</div>
+<div class="card c-blue mb">
+  <div class="ch ch-blue"><i>📋</i><div class="ch-t">投保規則一覽</div></div>
+  <div class="cb">
+    <div class="inner2">
+      <div>
+        <div class="row"><div class="rl">承保年齡</div><div class="rv hl">15 ～ 64 足歲</div></div>
+        <div class="row"><div class="rl">繳費方式</div><div class="rv hl">躉繳（一次繳清）・美元計價</div></div>
+        <div class="row"><div class="rl">最低保費</div><div class="rv hl">US$ 15,000</div></div>
+        <div class="row"><div class="rl">保費費用</div><div class="rv warn">⚠️ 保費之 3%（交付時收取）</div></div>
+      </div>
+      <div>
+        <div class="row"><div class="rl">體檢／告知</div><div class="rv ok">✅ 免體檢・免健康告知</div></div>
+        <div class="row"><div class="rl">審閱期</div><div class="rv">訂立契約前至少 <b>3 日</b></div></div>
+        <div class="row"><div class="rl">撤銷期</div><div class="rv">收保單翌日起算 <b>10 日</b>內</div></div>
+        <div class="row"><div class="rl">繳費管道</div><div class="rv" style="font-size:13px;">自行匯款 或 金融機構轉帳<br><span style="color:var(--sub);font-size:12px;">轉帳需附「保費自動付款授權書」</span></div></div>
+        <div class="row"><div class="rl">注意</div><div class="rv warn" style="font-size:13px;">🚫 美・加・日籍不得為要保人<br>本保險不得附加附約</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 年金給付 ── -->
+<div class="sec">🏦 年金給付規定</div>
+<div class="grid2">
+  <div class="card c-teal">
+    <div class="ch ch-teal"><i>⏱️</i><div class="ch-t">累積期間 ＆ 年金開始日</div></div>
+    <div class="cb">
+      <div class="row">
+        <div class="rl">累積期間</div>
+        <div class="rv hl">最短 <b>6 年</b>，不超過被保險人保險年齡達 <b>95 歲</b>之保單週年日</div>
+      </div>
+      <div class="row">
+        <div class="rl">年金開始日</div>
+        <div class="rv" style="font-size:13px;line-height:1.7;">
+          ① 自選：第 6 保單週年日屆滿後之任一保單週年日<br>
+          ② 未選擇：依條款約定以被保險人保險年齡達 <span class="hl"><b>70 歲</b></span>之保單週年日<br>
+          ③ 上限：不超過被保險人保險年齡達 <b>95 歲</b>之保單週年日
+        </div>
+      </div>
+      <div class="row">
+        <div class="rl">給付方式</div>
+        <div class="rv">
+          <div class="flow">
+            <div class="fb">💰 一次給付</div>
+            <div class="fa">或</div>
+            <div class="fb">📅 每年分期給付</div>
+          </div>
+          <div style="font-size:12px;color:var(--sub);">分期給付：自年金給付開始日起按年給付，直至被保險人保險年齡達 <b>110 歲</b>之保單週年日</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rl">保證期間<br><span style="font-size:11px;font-weight:500;">（分期給付適用）</span></div>
+        <div class="rv">
+          <div style="font-size:12px;color:var(--sub);margin-bottom:4px;">依年金給付開始時被保險人保險年齡指定：</div>
+          <div style="margin-bottom:4px;">
+            <span style="font-size:12px;color:var(--sub);">21–90 歲：</span>
+            <span class="chip chip-b">5年</span><span class="chip chip-b">10年</span><span class="chip chip-b">15年</span><span class="chip chip-b">20年</span>
+          </div>
+          <div>
+            <span style="font-size:12px;color:var(--sub);">91–95 歲：</span>
+            <span class="chip chip-t">5年</span><span class="chip chip-t">10年</span><span class="chip chip-t">15年</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card c-teal">
+    <div class="ch ch-teal"><i>📖</i><div class="ch-t">年金給付金額計算方式</div></div>
+    <div class="cb">
+      <div class="ib ib-t">
+        <b>一次給付：</b>給付年金給付開始日之<b>保單帳戶價值</b>
+      </div>
+      <div class="ib ib-t">
+        <b>每年分期給付：</b>以年金給付開始日之保單帳戶價值，依台灣人壽訂定之<b>預定利率</b>及<b>生命表</b>計算每年應給付之年金金額
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 年金給付開始後之身故處理（獨立區塊） ── -->
+<div class="card c-teal mb" style="border-color:#80cbc4;">
+  <div class="ch" style="background:linear-gradient(90deg,#004d40,#00897b);">
+    <i>🔔</i><div class="ch-t">年金給付開始後身故之處理</div>
+    <div class="ch-sub">⚠️ 與「保證最低身故給付」為不同概念</div>
+  </div>
+  <div class="cb">
+    <div class="ib" style="background:#e8f5e9;border:1.5px solid #a5d6a7;color:#1b5e20;margin-bottom:12px;">
+      <b>📌 重要區分：</b><br>
+      · <b>年金化前：</b>提供「保證最低身故給付金額」（取保單帳戶價值 vs 累繳保費較大值）<br>
+      · <b>年金化後：</b>保證最低身故給付不再適用。但若選擇<b>分期給付</b>且在<b>保證期間內</b>身故，未支領之年金餘額仍可由受益人受領
+    </div>
+    <div style="font-size:13px;font-weight:700;color:#00695c;margin-bottom:8px;">分期給付保證期間內身故（依 DM 第 3 頁「身故保險金」說明）：</div>
+    <div class="sc-grid">
+      <div class="sc sc-b">
+        <div class="sc-t2" style="color:var(--blue);">💙 繼續按期受領</div>
+        <div class="sc-c">身故受益人或其他應得之人，繼續按期受領年金金額，直至保證期間屆滿</div>
+      </div>
+      <div class="sc sc-t">
+        <div class="sc-t2" style="color:var(--teal);">💚 申請提前一次受領</div>
+        <div class="sc-c">申請提前一次受領，計算之貼現率為本保險契約所採用之<b>預定利率</b>（以貼現值一次給付）</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--sub);background:#f5f7fa;border-radius:6px;padding:8px 10px;line-height:1.7;">
+      ※ 保證期間屆滿後身故：年金給付終止，不再有任何給付<br>
+      ※ 出處：台灣人壽保富人生外幣變額年金保險 DM 第 3 頁「身故保險金」說明
+    </div>
+  </div>
+</div>
+
+<!-- ── 身故保證給付 ── -->
+<div class="sec">🎗️ 身故保證給付（年金化前）</div>
+<div class="card c-pink mb">
+  <div class="ch ch-pink"><i>💝</i><div class="ch-t">保證最低身故給付金額 ＆ 費用</div></div>
+  <div class="cb">
+    <div style="font-size:13px;font-weight:700;color:var(--sub);margin-bottom:8px;">📐 身故給付金額取兩者較大值：</div>
+    <div class="flow fpink" style="margin-bottom:14px;">
+      <div class="fb" style="border-color:var(--pink);color:var(--pink);">保單帳戶價值<br><span style="font-size:12px;font-weight:500;">收齊申請文件後次一資產評價日計算</span></div>
+      <div class="fa" style="color:var(--pink);">VS</div>
+      <div class="fb" style="border-color:var(--pink);color:var(--pink);">保證最低身故給付金額<br>＝ <b>累繳保費</b><br><span style="font-size:12px;font-weight:500;">加計次一資產評價日資金停泊帳戶之投資標的價值</span></div>
+      <div class="fa" style="color:var(--pink);">→</div>
+      <div class="fres">取較大值<br>給付 💝</div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:14px;">
+      <div class="ib ib-p" style="margin-bottom:0;">
+        <b>💸 身故保證費用收取：</b><br>
+        · 年金累積期間內台灣人壽<b>每月</b>收取<br>
+        · 公式：（保單帳戶價值 − 資金停泊帳戶投資標的價值）× <b>每月費用率</b><br>
+        · 費率依<b>投保年齡</b>及<b>性別</b>訂定（詳見商品說明書附表二）<br>
+        · 年金給付開始後：<b>停止收取，亦不再提供保證最低身故給付</b>
+      </div>
+      <div class="ib ib-w" style="margin-bottom:0;">
+        <b>⚠️ 保證最低金額減少的情況：</b><br>
+        下列操作均按<b>比例減少</b>保證最低金額（最低至零）：<br>
+        · <b>辦理部分提領：</b>提領金額（扣停泊帳戶後）占帳戶價值之比例減少<br>
+        · <b>扣抵保單借款本息：</b>扣抵金額（扣停泊帳戶後）之比例減少
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--pink);margin-bottom:6px;">⚡ 特殊情況</div>
+    <div class="sc-grid">
+      <div class="sc sc-p">
+        <div class="sc-t2" style="color:var(--pink);">首次投資配置日前身故</div>
+        <div class="sc-c">改以要保人繳交之<b>保費金額</b>作為身故給付金額（非保單帳戶價值）</div>
+      </div>
+      <div class="sc sc-t">
+        <div class="sc-t2" style="color:var(--teal);">已逾年金給付開始日後身故</div>
+        <div class="sc-c">若已逾年金給付開始日，台灣人壽以<b>年金累積期間屆滿日</b>為基準日之次一資產評價日計算；進入年金給付期間後，依年金給付相關規定處理</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 各項費用 ── -->
+<div class="sec">💴 各項費用一覽</div>
+<div class="card c-amb mb">
+  <div class="ch ch-amb"><i>💴</i><div class="ch-t">費用總覽</div></div>
+  <div class="cb">
+    <div class="fee3">
+      <div class="fm fm-y">
+        <div class="fml" style="color:#e65100;">📌 保費費用</div>
+        <div class="fmv" style="color:#c62828;">3%</div>
+        <div class="fmn">交付保費時收取</div>
+      </div>
+      <div class="fm fm-p">
+        <div class="fml" style="color:var(--pink);">🎗️ 身故保證費用</div>
+        <div class="fmv" style="color:var(--pink);font-size:16px;line-height:1.3;">每月收取</div>
+        <div class="fmn">依投保年齡及性別費率<br>年金給付開始後停止</div>
+      </div>
+      <div class="fm fm-b">
+        <div class="fml" style="color:var(--blue);">🔄 基金轉換費用</div>
+        <div class="fmv" style="color:#1565c0;">12次/年免費</div>
+        <div class="fmn">第13次起每次 US$15<br>從轉換金額中扣除</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+    <table class="stbl">
+      <thead>
+        <tr><th>費用項目</th><th>第1年</th><th>第2年</th><th>第3年</th><th>第4年</th><th>第5年</th><th>第6年（含）後 🎉</th></tr>
+      </thead>
+      <tbody>
+        <tr class="r1"><td style="text-align:left;padding-left:10px;font-weight:800;">🚪 解約費用率</td><td>7%</td><td>5%</td><td>4%</td><td>3%</td><td>2%</td><td><b>0%！</b></td></tr>
+        <tr class="rlast"><td style="text-align:left;padding-left:10px;font-weight:800;">💸 部分提領費用率</td><td>7%</td><td>5%</td><td>4%</td><td>3%</td><td>2%</td><td><b>0%！</b></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="stbl-n">
+      📌 解約／部分提領費用基數＝保單帳戶價值 − 資金停泊帳戶之投資標的價值<br>
+      📌 投資標的之經理費、保管費已反應於投資標的之單位淨值中，台灣人壽未另行收取<br>
+      📌 若投資標的依法須課徵交易稅，台灣人壽將於賣出時直接由賣出款項中扣除
+    </div>
+  </div>
+</div>
+
+<!-- ── 投資標的 ── -->
+<div class="sec">🌐 全部投資標的（依台灣人壽公告）</div>
+<div class="card c-pur mb">
+  <div class="ch ch-pur">
+    <i>🌐</i>
+    <div class="ch-t">投資標的完整列示</div>
+    <div class="ch-sub">資料：taiwanlife.com/target-overview　年化配息率為估算值</div>
+  </div>
+
+  <!-- RR3 共同基金 -->
+  <div class="fund-group-title" style="color:var(--pur);">📊 共同基金（RR3）</div>
+  <div class="funds-rr3">
+
+    <div class="fcol" data-fund="DB001">
+      <div class="ftag"><span class="tag tc">DB001</span><span class="tag tr">RR3</span><span class="tag ta">⚡ 資產撥回</span></div>
+      <div class="fname">安聯收益成長基金<br>AM 穩定月收類股（美元）</div>
+      <div class="frow"><span class="fl">配息基準日</span><span class="fv" id="divdate-DB001">2026/03/13</span></div>
+      <div class="frow"><span class="fl">最新淨值日</span><span class="fv nav-date" id="date-DB001">2026/04/02</span></div>
+      <div class="frow"><span class="fl">最新淨值</span><span class="fv nav-val" id="nav-DB001">USD 8.4038</span></div>
+      <div class="frow"><span class="fl">最近一次配息</span><span class="fv">USD 0.055 / 單位</span></div>
+      <div class="ypill">
+        <div><div class="yp-e">📊 年化配息率約</div><div class="yp-n">參考最近一次月配息</div></div>
+        <div class="yp-r" id="rate-DB001">7.85%</div>
+      </div>
+    </div>
+
+    <div class="fcol" data-fund="DB002">
+      <div class="ftag"><span class="tag tc">DB002</span><span class="tag tr">RR3</span><span class="tag ta">⚡ 資產撥回</span></div>
+      <div class="fname">聯博－全球多元收益基金<br>AD 月配級別美元</div>
+      <div class="frow"><span class="fl">配息基準日</span><span class="fv" id="divdate-DB002">2026/03/30</span></div>
+      <div class="frow"><span class="fl">最新淨值日</span><span class="fv nav-date" id="date-DB002">2026/04/02</span></div>
+      <div class="frow"><span class="fl">最新淨值</span><span class="fv nav-val" id="nav-DB002">USD 9.08</span></div>
+      <div class="frow"><span class="fl">最近一次配息</span><span class="fv">USD 0.063 / 單位</span></div>
+      <div class="ypill">
+        <div><div class="yp-e">📊 年化配息率約</div><div class="yp-n">參考最近一次月配息</div></div>
+        <div class="yp-r" id="rate-DB002">8.33%</div>
+      </div>
+    </div>
+
+    <div class="fcol" data-fund="DB003">
+      <div class="ftag"><span class="tag tc">DB003</span><span class="tag tr">RR3</span><span class="tag ta">⚡ 資產撥回</span></div>
+      <div class="fname">施羅德環球基金系列<br>環球多元收益（美元）A-月配固定</div>
+      <div class="frow"><span class="fl">配息基準日</span><span class="fv" id="divdate-DB003">2026/03/25</span></div>
+      <div class="frow"><span class="fl">最新淨值日</span><span class="fv nav-date" id="date-DB003">2026/04/02</span></div>
+      <div class="frow"><span class="fl">最新淨值</span><span class="fv nav-val" id="nav-DB003">USD 105.23</span></div>
+      <div class="frow"><span class="fl">最近一次配息</span><span class="fv">USD 0.617 / 單位</span></div>
+      <div class="ypill">
+        <div><div class="yp-e">📊 年化配息率約</div><div class="yp-n">固定年化 7%</div></div>
+        <div class="yp-r" id="rate-DB003">7.04%</div>
+      </div>
+    </div>
+
+    <div class="fcol" data-fund="DB004">
+      <div class="ftag"><span class="tag tc">DB004</span><span class="tag tr">RR3</span><span class="tag ta">⚡ 資產撥回</span></div>
+      <div class="fname">摩根投資基金-多重收益基金<br>JPM多重收益（美元對沖）-A股（利率入息）</div>
+      <div class="frow"><span class="fl">配息基準日</span><span class="fv" id="divdate-DB004">2026/03/09</span></div>
+      <div class="frow"><span class="fl">最新淨值日</span><span class="fv nav-date" id="date-DB004">2026/04/01</span></div>
+      <div class="frow"><span class="fl">最新淨值</span><span class="fv nav-val" id="nav-DB004">USD 8.28</span></div>
+      <div class="frow"><span class="fl">最近一次配息</span><span class="fv">USD 0.052 / 單位</span></div>
+      <div class="ypill">
+        <div><div class="yp-e">📊 年化配息率約</div><div class="yp-n">參考最近一次月配息</div></div>
+        <div class="yp-r" id="rate-DB004">7.54%</div>
+      </div>
+    </div>
+
+    <div class="fcol no-bottom" data-fund="DB005">
+      <div class="ftag"><span class="tag tc">DB005</span><span class="tag tr">RR3</span><span class="tag ta">⚡ 資產撥回</span></div>
+      <div class="fname">富達基金-全球多重資產收益基金<br>（A股C月配息美元）</div>
+      <div class="frow"><span class="fl">配息基準日</span><span class="fv" id="divdate-DB005">2026/03/31</span></div>
+      <div class="frow"><span class="fl">最新淨值日</span><span class="fv nav-date" id="date-DB005">2026/04/03</span></div>
+      <div class="frow"><span class="fl">最新淨值</span><span class="fv nav-val" id="nav-DB005">USD 7.863</span></div>
+      <div class="frow"><span class="fl">最近一次配息</span><span class="fv">USD 0.049 / 單位</span></div>
+      <div class="ypill">
+        <div><div class="yp-e">📊 年化配息率約</div><div class="yp-n">參考最近一次月配息</div></div>
+        <div class="yp-r" id="rate-DB005">7.47%</div>
+      </div>
+    </div>
+
+    <div class="fcol no-bottom" style="display:flex;align-items:center;justify-content:center;background:#fafafa;">
+      <div style="text-align:center;color:var(--sub);font-size:12px;line-height:1.8;">
+        📌 DB001–DB005<br>均為共同基金・月配息<br>配息來源可能為本金
+      </div>
+    </div>
+
+  </div><!-- end funds-rr3 -->
+
+  <!-- RR1 -->
+  <div class="fund-group-title" style="color:var(--teal);border-top:2px dashed var(--bdr);padding-top:10px;margin-top:4px;">🏦 貨幣型基金 ＆ 資金停泊帳戶（RR1）</div>
+  <div class="funds-rr1">
+
+    <div class="fcol no-bottom">
+      <div class="ftag">
+        <span class="tag tc">F1483</span>
+        <span class="tag" style="background:#00838f;color:white;">RR1</span>
+        <span class="tag" style="background:var(--teal2);color:var(--teal);border:1.5px solid #80deea;">💧 貨幣型</span>
+      </div>
+      <div class="fname">瑞銀（盧森堡）美元基金<br><span style="font-size:12px;font-weight:500;color:var(--sub);">本基金非屬環境、社會及治理相關主題基金</span></div>
+      <div class="frow"><span class="fl">風險等級</span><span class="fv ok">RR1 低風險</span></div>
+      <div class="frow"><span class="fl">配息頻率</span><span class="fv">月配息</span></div>
+      <div class="rr1-box">💡 <b>僅接受申購轉入，不受理申購申請</b><br>可作為基金轉換之銜接停泊用途・利率依市場浮動</div>
+    </div>
+
+    <div class="fcol no-bottom" style="border-right:none;">
+      <div class="ftag">
+        <span class="tag tc">F201</span>
+        <span class="tag" style="background:#00838f;color:white;">RR1</span>
+        <span class="tag" style="background:var(--teal2);color:var(--teal);border:1.5px solid #80deea;">🏦 停泊帳戶</span>
+      </div>
+      <div class="fname">台灣人壽美元資金停泊帳戶（二）<br><span style="font-size:12px;font-weight:500;color:var(--sub);">Taiwan Life USD Cash Account (II)</span></div>
+      <div class="frow"><span class="fl">風險等級</span><span class="fv ok">RR1 低風險</span></div>
+      <div class="frow"><span class="fl">單位淨值</span><span class="fv" style="color:var(--sub);">資金停泊帳戶無單位淨值</span></div>
+      <div class="rr1-box green">💡 <b>保單成立初期及資金調配時使用</b><br>首次投資配置前資金暫存處・利率依台灣人壽公告</div>
+    </div>
+
+  </div><!-- end funds-rr1 -->
+
+  <div class="fund-footer">
+    📌 年化配息率公式：每單位配息 × 12 ÷ 除息日前一日淨值 × 100%，為估算值，不代表基金實際報酬<br>
+    📌 DB001–DB005 配息來源可能為本金，可能導致原始投資金額減損<br>
+    📌 本商品所連結之一切投資標的無保本、無保證最低投資收益；最大可能損失為全部投資本金
+  </div>
+  <a class="furl" href="https://www.taiwanlife.com/target-overview" target="_blank">🔗 查閱最新淨值及配息：taiwanlife.com/target-overview</a>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer">
+  <div class="fbrand">台壽</div>
+  <div class="fnotice">📎 訓練教材・僅供內部使用，不得自行刪改、摘錄或轉寄其中文字。</div>
+</div>
+
+</div><!-- end page -->
+
+</body>
+</html>
