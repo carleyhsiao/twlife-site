@@ -120,16 +120,17 @@ def main():
             nav      = nav_data["nav"]
             nav_date = nav_data["date"]
             div      = div_data["div"]     if div_data else cfg["div"]
-            div_date = div_data["divDate"] if div_data else "-"
+            div_date = div_data["divDate"] if div_data else None  # None = 抓不到時保留原值
             rate     = round((div * 12) / nav * 100, 2)
 
             print(f"  NAV: {nav} ({nav_date})")
-            print(f"  Div date: {div_date}  Div: {div}  Rate: {rate}%")
+            print(f"  Div date: {div_date or '(保留原值)'}  Div: {div}  Rate: {rate}%")
 
             html = update_el(html, f"nav-{code}",     f"USD {nav:.4f}")
             html = update_el(html, f"date-{code}",    nav_date)
             html = update_el(html, f"rate-{code}",    f"{rate}%")
-            html = update_el(html, f"divdate-{code}", div_date)
+            if div_date:  # 只有成功抓到日期才更新，否則保留原本的值
+                html = update_el(html, f"divdate-{code}", div_date)
             cfg["div"] = div
 
         except Exception as e:
