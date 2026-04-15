@@ -28,9 +28,6 @@ def fetch_md(url):
         return r.read().decode("big5", errors="replace")
 
 def parse_nav(html):
-    """
-    MoneyDJ 淨值頁：直接用正規表達式找「日期</td><td>數字」的模式
-    """
     m = re.search(
         r'(\d{4}/\d{2}/\d{2})</td>\s*<td[^>]*>\s*([\d.]+)\s*</td>',
         html
@@ -43,37 +40,39 @@ def parse_nav(html):
 
 def parse_div(html):
     """
-    MoneyDJ 配息頁真實結構（從 log 確認）：
-    前面有大量廣告 <td>，表頭也在 <td> 裡：
-    '配息基準日', '除息日', '發放日', '狀態', '每單位分配金額', '年化配息率%'
-    
-    策略：直接在原始 HTML 找「日期</td>...<td>日期</td>」模式，
-    然後從那個位置往後找配息金額
+    MoneyDJ 配息頁 - 用最寬鬆的方式找兩個相鄰日期：
+    不管日期在不在 <a> tag 裡，只要在同一個 <td> 附近找到兩個連續日期即可
     """
-    # 找第一組「兩個相鄰日期」在 HTML 中的位置
-    # 兩個日期之間只隔一個 </td><td...> 或 </td>\n<td...>
-    m = re.search(
-        r'(\d{4}/\d{2}/\d{2})</td>\s*<td[^>]*>\s*(\d{4}/\d{2}/\d{2})</td>',
-        html
-    )
-    if not m:
-        print("  [div] 找不到連續兩個日期")
-        return None
-
-    div_date = m.group(1)
-    print(f"  [div] 找到基準日={div_date}, 除息日={m.group(2)}")
-
-    # 從這個位置往後，找第一個合理的配息金額
-    after = html[m.start():]
-    # 找所有 <td>數字</td> 格式
-    nums = re.findall(r'<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>', after[:800])
-    print(f"  [div] 往後找到的數字: {nums[:8]}")
-
-    for n in nums:
-        v = float(n)
-        if 0.001 < v < 100:
-            return {"divDate": div_date, "div": v}
-
+    # 找所有在 HTML 中出現的日期
+    all_dates = list(re.finditer(r'\d{4}/\d{2}/\d{2}', html))
+    
+    print(f"  [div] 頁面中共找到 {len(all_dates)} 個日期")
+    if all_dates:
+        print(f"  [div] 前5個日期: {[m.group() for m in all_dates[:5]]}")
+    
+    # 找兩個位置相近的日期（同一行的基準日和除息日）
+    for i in range(len(all_dates) - 1):
+        d1 = all_dates[i]
+        d2 = all_dates[i + 1]
+        gap = d2.start() - d1.end()
+        
+        # 兩個日期之間距離很短（同一行）
+        if gap < 80:
+            div_date = d1.group()
+            ex_date = d2.group()
+            print(f"  [div] 找到相鄰日期: {div_date} / {ex_date} (gap={gap})")
+            
+            # 從第一個日期開始，往後找第一個合理的配息金額
+            after = html[d1.start():d1.start() + 600]
+            nums = re.findall(r'<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>', after)
+            print(f"  [div] 往後找到的數字: {nums[:8]}")
+            
+            for n in nums:
+                v = float(n)
+                if 0.001 < v < 100:
+                    return {"divDate": div_date, "div": v}
+            break
+    
     return None
 
 def update_el(html, el_id, new_text):
