@@ -27,54 +27,51 @@ def fetch_md(url):
     with urllib.request.urlopen(req, timeout=20) as r:
         return r.read().decode("big5", errors="replace")
 
-def get_td_values(html):
-    """抓出 HTML 中所有 <td> 的文字內容，依序排列"""
-    return re.findall(r'<td[^>]*>\s*(.*?)\s*</td>', html, re.DOTALL)
-
-def clean(s):
-    """移除 HTML 標籤和多餘空白"""
-    return re.sub(r'<[^>]+>', '', s).strip()
-
 def parse_nav(html):
     """
-    MoneyDJ 淨值頁：找第一個符合「日期 + 數字」格式的 td 組合
+    MoneyDJ 淨值頁：抓第一個「日期」後面緊接的數字
     格式：日期 | 最新淨值 | 漲跌 | 年最高 | 年最低
     """
-    tds = [clean(v) for v in get_td_values(html)]
-    date_re = re.compile(r'^\d{4}/\d{2}/\d{2}$')
-    for i, td in enumerate(tds):
-        if date_re.match(td) and i + 1 < len(tds):
-            try:
-                nav = float(tds[i + 1])
-                if nav > 0:
-                    return {"date": td, "nav": nav}
-            except ValueError:
-                continue
+    # 找所有日期
+    dates = re.findall(r'(\d{4}/\d{2}/\d{2})', html)
+    if not dates:
+        return None
+    # 找日期後面第一個有效淨值
+    for date in dates[:5]:
+        # 找該日期在 html 中的位置，然後往後找數字
+        idx = html.find(date)
+        after = html[idx:idx+200]
+        nums = re.findall(r'>(\d+\.\d+)<', after)
+        for n in nums:
+            v = float(n)
+            if v > 0.5:  # 淨值通常大於 0.5
+                return {"date": date, "nav": v}
     return None
 
 def parse_div(html):
     """
-    MoneyDJ 配息頁表格欄位（固定 8 欄）：
-    [0] 配息基準日  [1] 除息日  [2] 發放日  [3] 類型
-    [4] 每單位配息  [5] 年化配息率  [6] 備註  [7] 附件
+    MoneyDJ 配息頁：
+    格式確認（from web_fetch）：
+    | 2026/03/13 | 2026/03/16 | 2026/03/18 | 配息 | 0.055 | 7.97 |
     
-    策略：找第一個日期，往後數到第 5 個 td，就是配息金額
+    直接用 regex 找「日期 + 日期 + ... + 小數」的模式
+    兩個連續日期確認是配息記錄，第5個 td 內容是配息金額
     """
-    tds = [clean(v) for v in get_td_values(html)]
-    date_re = re.compile(r'^\d{4}/\d{2}/\d{2}$')
-    
-    for i, td in enumerate(tds):
-        if date_re.match(td):
-            # 確認第 2 欄也是日期（除息日），避免抓到淨值頁的日期
-            if i + 1 < len(tds) and date_re.match(tds[i + 1]):
-                # 第 5 欄（index i+4）是每單位配息
-                if i + 4 < len(tds):
-                    try:
-                        div = float(tds[i + 4])
-                        if 0.001 < div < 100:
-                            return {"divDate": td, "div": div}
-                    except ValueError:
-                        pass
+    # 找 <tr> 第一列含有兩個連續日期的行
+    # 格式：<td>日期</td><td>日期</td>...<td>配息金額</td>
+    m = re.search(
+        r'(\d{4}/\d{2}/\d{2})'          # 配息基準日
+        r'.{1,50}?'                       # 可能有 </td><td> 等標籤
+        r'\d{4}/\d{2}/\d{2}'            # 除息日
+        r'.{1,300}?'                      # 中間內容（發放日、類型）
+        r'>(\d+\.\d+)<',                  # 配息金額
+        html,
+        re.DOTALL
+    )
+    if m:
+        div = float(m.group(2))
+        if 0.001 < div < 100:
+            return {"divDate": m.group(1), "div": div}
     return None
 
 def update_el(html, el_id, new_text):
@@ -126,8 +123,7 @@ def main():
             if div_date:
                 html = update_el(html, f"divdate-{code}", div_date)
             else:
-                print(f"  SKIP divdate-{code} (keeping existing value)")
-
+                print(f"  SKIP divdate-{code} (keeping existing)")
             cfg["div"] = div
 
         except Exception as e:
