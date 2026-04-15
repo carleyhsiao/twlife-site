@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-# update_nav.py
-# GitHub Actions runs this daily at 08:00 Taiwan time (UTC 00:00)
-# Fetches NAV and dividend data from MoneyDJ, updates baofu.html
+"""
+update_nav.py - 每天台灣時間 08:00 由 GitHub Actions 自動執行
+直接從 MoneyDJ 抓取 DB001-DB005 最新淨值及配息資料，更新 baofu.html
+"""
 
 import re
 import urllib.request
 from datetime import datetime, timezone, timedelta
 
 FUNDS = {
-    "DB001": {"mdNav": "TLZ64", "mdDiv": "TLZ64", "div": 0.055, "name": "Allianz AM"},
-    "DB002": {"mdNav": "ALBG6", "mdDiv": "ALBG6", "div": 0.063, "name": "AB AD"},
-    "DB003": {"mdNav": "PYZW5", "mdDiv": "PYZW5", "div": 0.617, "name": "Schroders"},
-    "DB004": {"mdNav": "JFZK2", "mdDiv": "JFZK2", "div": 0.052, "name": "JPMorgan"},
-    "DB005": {"mdNav": "FTZU8", "mdDiv": "FTZU8", "div": 0.049, "name": "Fidelity"},
+    "DB001": {"mdNav": "TLZ64", "mdDiv": "TLZ64", "div": 0.055, "name": "安聯AM穩定月收"},
+    "DB002": {"mdNav": "ALBG6", "mdDiv": "ALBG6", "div": 0.063, "name": "聯博AD月配"},
+    "DB003": {"mdNav": "PYZW5", "mdDiv": "PYZW5", "div": 0.617, "name": "施羅德環球多元"},
+    "DB004": {"mdNav": "JFZK2", "mdDiv": "JFZK2", "div": 0.052, "name": "摩根JPM多重收益"},
+    "DB005": {"mdNav": "FTZU8", "mdDiv": "FTZU8", "div": 0.049, "name": "富達全球多重資產"},
 }
 
 HEADERS = {
@@ -26,61 +27,54 @@ def fetch_md(url):
     with urllib.request.urlopen(req, timeout=20) as r:
         return r.read().decode("big5", errors="replace")
 
+def get_td_values(html):
+    """抓出 HTML 中所有 <td> 的文字內容，依序排列"""
+    return re.findall(r'<td[^>]*>\s*(.*?)\s*</td>', html, re.DOTALL)
+
+def clean(s):
+    """移除 HTML 標籤和多餘空白"""
+    return re.sub(r'<[^>]+>', '', s).strip()
+
 def parse_nav(html):
-    # NAV page format: date | nav | change | high | low
-    m = re.search(
-        r"(\d{4}/\d{2}/\d{2})</td>\s*<td[^>]*>\s*([\d.]+)\s*</td>",
-        html
-    )
-    if m:
-        nav = float(m.group(2))
-        if nav > 0:
-            return {"date": m.group(1), "nav": nav}
+    """
+    MoneyDJ 淨值頁：找第一個符合「日期 + 數字」格式的 td 組合
+    格式：日期 | 最新淨值 | 漲跌 | 年最高 | 年最低
+    """
+    tds = [clean(v) for v in get_td_values(html)]
+    date_re = re.compile(r'^\d{4}/\d{2}/\d{2}$')
+    for i, td in enumerate(tds):
+        if date_re.match(td) and i + 1 < len(tds):
+            try:
+                nav = float(tds[i + 1])
+                if nav > 0:
+                    return {"date": td, "nav": nav}
+            except ValueError:
+                continue
     return None
 
 def parse_div(html):
-    # Dividend page format: record_date | ex_date | pay_date | type | amount | annual_rate
-    # Method 1: record_date + ex_date (two consecutive dates) + amount
-    m = re.search(
-        r"(\d{4}/\d{2}/\d{2})</td>\s*"
-        r"<td[^>]*>\d{4}/\d{2}/\d{2}</td>\s*"
-        r"<td[^>]*>.*?</td>\s*"
-        r"<td[^>]*>[^<]*</td>\s*"
-        r"<td[^>]*>\s*([\d.]+)\s*</td>",
-        html,
-        re.DOTALL
-    )
-    if m:
-        div = float(m.group(2))
-        if 0.001 < div < 100:
-            return {"divDate": m.group(1), "div": div}
-
-    # Method 2: pay_date is '--'
-    m = re.search(
-        r"(\d{4}/\d{2}/\d{2})</td>\s*"
-        r"<td[^>]*>\d{4}/\d{2}/\d{2}</td>\s*"
-        r"<td[^>]*>--</td>\s*"
-        r"<td[^>]*>[^<]*</td>\s*"
-        r"<td[^>]*>\s*([\d.]+)\s*</td>",
-        html,
-        re.DOTALL
-    )
-    if m:
-        div = float(m.group(2))
-        if 0.001 < div < 100:
-            return {"divDate": m.group(1), "div": div}
-
-    # Method 3: fallback - first date + first decimal in range 0.01~10
-    dates = re.findall(r"(\d{4}/\d{2}/\d{2})</td>", html)
-    if dates:
-        div_date = dates[0]
-        after = html[html.find(div_date + "</td>"):]
-        nums = re.findall(r"<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>", after[:2000])
-        for s in nums:
-            v = float(s)
-            if 0.01 <= v <= 10:
-                return {"divDate": div_date, "div": v}
-
+    """
+    MoneyDJ 配息頁表格欄位（固定 8 欄）：
+    [0] 配息基準日  [1] 除息日  [2] 發放日  [3] 類型
+    [4] 每單位配息  [5] 年化配息率  [6] 備註  [7] 附件
+    
+    策略：找第一個日期，往後數到第 5 個 td，就是配息金額
+    """
+    tds = [clean(v) for v in get_td_values(html)]
+    date_re = re.compile(r'^\d{4}/\d{2}/\d{2}$')
+    
+    for i, td in enumerate(tds):
+        if date_re.match(td):
+            # 確認第 2 欄也是日期（除息日），避免抓到淨值頁的日期
+            if i + 1 < len(tds) and date_re.match(tds[i + 1]):
+                # 第 5 欄（index i+4）是每單位配息
+                if i + 4 < len(tds):
+                    try:
+                        div = float(tds[i + 4])
+                        if 0.001 < div < 100:
+                            return {"divDate": td, "div": div}
+                    except ValueError:
+                        pass
     return None
 
 def update_el(html, el_id, new_text):
@@ -89,12 +83,12 @@ def update_el(html, el_id, new_text):
     if n == 0:
         print(f"  WARNING: id={el_id} not found")
     else:
-        print(f"  OK: {el_id} -> {new_text}")
+        print(f"  OK {el_id} -> {new_text}")
     return result
 
 def main():
     tw_now = datetime.now(timezone(timedelta(hours=8)))
-    print(f"Time (Taiwan): {tw_now.strftime('%Y/%m/%d %H:%M')}")
+    print(f"Time (TW): {tw_now.strftime('%Y/%m/%d %H:%M')}")
     print("=" * 50)
 
     with open("baofu.html", encoding="utf-8") as f:
@@ -120,17 +114,20 @@ def main():
             nav      = nav_data["nav"]
             nav_date = nav_data["date"]
             div      = div_data["div"]     if div_data else cfg["div"]
-            div_date = div_data["divDate"] if div_data else None  # None = 抓不到時保留原值
+            div_date = div_data["divDate"] if div_data else None
             rate     = round((div * 12) / nav * 100, 2)
 
             print(f"  NAV: {nav} ({nav_date})")
-            print(f"  Div date: {div_date or '(保留原值)'}  Div: {div}  Rate: {rate}%")
+            print(f"  DIV date: {div_date or '(keep existing)'}  amount: {div}  rate: {rate}%")
 
             html = update_el(html, f"nav-{code}",     f"USD {nav:.4f}")
             html = update_el(html, f"date-{code}",    nav_date)
             html = update_el(html, f"rate-{code}",    f"{rate}%")
-            if div_date:  # 只有成功抓到日期才更新，否則保留原本的值
+            if div_date:
                 html = update_el(html, f"divdate-{code}", div_date)
+            else:
+                print(f"  SKIP divdate-{code} (keeping existing value)")
+
             cfg["div"] = div
 
         except Exception as e:
