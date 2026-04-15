@@ -5,7 +5,7 @@ update_nav.py - 每天台灣時間 08:00 由 GitHub Actions 自動執行
 
 import re
 import urllib.request
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 
 FUNDS = {
     "DB001": {"mdNav": "TLZ64", "mdDiv": "TLZ64", "div": 0.055, "name": "安聯AM穩定月收"},
@@ -38,17 +38,11 @@ def parse_nav(html):
     return None
 
 def parse_div(html):
-    """
-    找配息基準日：
-    - 找兩個相鄰日期（gap < 150）
-    - 第一個日期必須是「月中」（每月配息通常在 5~31 日）
-    - 且後面跟著配息金額 <td>小數</td>
-    """
     tw_now = datetime.now(timezone(timedelta(hours=8)))
-    today_str = tw_now.strftime("%Y/%m/%d")
+    today = tw_now.date()
 
     all_dates = list(re.finditer(r'\d{4}/\d{2}/\d{2}', html))
-    print(f"  [div] 共 {len(all_dates)} 個日期，今天={today_str}")
+    print(f"  [div] 共 {len(all_dates)} 個日期")
 
     for i in range(len(all_dates) - 1):
         d1 = all_dates[i]
@@ -59,36 +53,38 @@ def parse_div(html):
             div_date = d1.group()
             ex_date  = d2.group()
 
-            # 排除今天或近期導覽日期（配息基準日通常比今天早至少 5 天）
-            from datetime import date
+            # 排除近期日期（配息基準日通常比今天早至少 5 天）
             try:
                 div_dt = date(int(div_date[:4]), int(div_date[5:7]), int(div_date[8:]))
-                today  = tw_now.date()
                 if (today - div_dt).days < 5:
-                    print(f"  [div] 跳過近期日期 {div_date} (太新)")
                     continue
             except:
                 continue
 
-            print(f"  [div] 找到相鄰日期: {div_date} / {ex_date} (gap={gap})")
+            print(f"  [div] 找到日期: {div_date} / {ex_date} (gap={gap})")
 
-            # 在這個位置往後找配息金額 <td>小數</td>
-            after = html[d1.start():d1.start() + 600]
-            nums = re.findall(r'<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>', after)
-            print(f"  [div] 數字候選: {nums[:8]}")
+            # 從找到的位置往後搜尋 3000 字元找配息金額
+            after = html[d1.start():d1.start() + 3000]
 
-            for n in nums:
+            # 找所有 <td> 格式的數字
+            nums_td = re.findall(r'<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>', after)
+            print(f"  [div] <td>數字: {nums_td[:10]}")
+
+            for n in nums_td:
                 v = float(n)
                 if 0.001 < v < 100:
                     return {"divDate": div_date, "div": v}
 
-            # 備用：找任何小數（不限 <td> 格式）
-            all_nums = re.findall(r'[\s>](\d+\.\d+)[\s<\r\n]', after)
-            print(f"  [div] 備用數字: {all_nums[:8]}")
-            for n in all_nums:
+            # 備用：找任何格式的小數
+            nums_any = re.findall(r'(\d+\.\d+)', after)
+            print(f"  [div] 所有小數: {nums_any[:15]}")
+
+            for n in nums_any:
                 v = float(n)
                 if 0.001 < v < 100:
                     return {"divDate": div_date, "div": v}
+
+            break  # 只試第一組相鄰日期
 
     return None
 
