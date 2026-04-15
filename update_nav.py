@@ -25,47 +25,62 @@ HEADERS = {
 def fetch_md(url):
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=20) as r:
-        raw = r.read()
-        return raw.decode("big5", errors="replace")
+        return r.read().decode("big5", errors="replace")
+
+def extract_td_values(html):
+    """抓出所有 <td>...</td> 的內容，移除內部 HTML tag"""
+    tds = re.findall(r'<td[^>]*>(.*?)</td>', html, re.DOTALL | re.IGNORECASE)
+    return [re.sub(r'<[^>]+>', '', td).strip() for td in tds]
 
 def parse_nav(html):
-    # 找所有日期，取第一個日期後面緊接的數字作為淨值
-    dates = re.findall(r'(\d{4}/\d{2}/\d{2})', html)
-    for date in dates[:3]:
-        idx = html.find(date)
-        chunk = html[idx:idx+300]
-        nums = re.findall(r'[\s>](\d+\.\d{2,4})[\s<]', chunk)
-        for n in nums:
-            v = float(n)
-            if v > 0.5:
-                return {"date": date, "nav": v}
+    """
+    MoneyDJ 淨值頁：日期 | 淨值 | 漲跌 | 年最高 | 年最低
+    找第一個日期格式的 td，下一個 td 就是淨值
+    """
+    tds = extract_td_values(html)
+    date_re = re.compile(r'^\d{4}/\d{2}/\d{2}$')
+    for i, td in enumerate(tds):
+        if date_re.match(td) and i + 1 < len(tds):
+            try:
+                nav = float(tds[i + 1])
+                if nav > 0.5:
+                    return {"date": td, "nav": nav}
+            except ValueError:
+                continue
     return None
 
 def parse_div(html):
     """
-    MoneyDJ 配息頁真實格式（已驗證）：
-    <td>2026/03/13</td><td>2026/03/16</td><td>2026/03/18</td><td>配息</td><td>0.055</td><td>7.97</td>
-    
-    策略：找第一個日期，確認其後還有另一個日期（除息日），
-    然後找後面第一個介於 0.01~10 的小數作為配息金額
+    MoneyDJ 配息頁：配息基準日 | 除息日 | 發放日 | 類型 | 每單位配息 | 年化率 | 備註 | 附件
+    找連續兩個日期格式的 td（基準日 + 除息日），
+    再往後第 3 個 td 就是配息金額（跳過發放日和類型）
     """
-    # 找所有日期位置
-    date_matches = list(re.finditer(r'(\d{4}/\d{2}/\d{2})', html))
-    
-    for i, dm in enumerate(date_matches[:-1]):
-        # 確認這個日期後面不遠處還有另一個日期（確認是配息表格行）
-        gap = date_matches[i+1].start() - dm.end()
-        if gap < 100:  # 兩個日期很接近 = 同一行
-            div_date = dm.group(1)
-            # 從第一個日期之後，找第一個合理的配息金額
-            after = html[dm.start():dm.start()+500]
-            # 找所有小數
-            nums = re.findall(r'[\s>](\d+\.\d+)[\s<]', after)
-            print(f"  [debug] date={div_date}, nums found: {nums[:8]}")
-            for n in nums:
-                v = float(n)
-                if 0.01 <= v <= 10:
-                    return {"divDate": div_date, "div": v}
+    tds = extract_td_values(html)
+    date_re = re.compile(r'^\d{4}/\d{2}/\d{2}$')
+    for i, td in enumerate(tds):
+        if date_re.match(td) and i + 1 < len(tds) and date_re.match(tds[i + 1]):
+            # tds[i]   = 配息基準日
+            # tds[i+1] = 除息日
+            # tds[i+2] = 發放日（可能是日期或--）
+            # tds[i+3] = 類型（配息）
+            # tds[i+4] = 每單位配息金額  ← 目標
+            if i + 4 < len(tds):
+                try:
+                    div = float(tds[i + 4])
+                    if 0.001 < div < 100:
+                        print(f"  [div found] date={td}, tds[i:i+6]={tds[i:i+6]}")
+                        return {"divDate": td, "div": div}
+                except ValueError:
+                    pass
+            # 備用：往後找第一個合理的小數
+            for j in range(i + 2, min(i + 8, len(tds))):
+                try:
+                    v = float(tds[j])
+                    if 0.001 < v < 100:
+                        print(f"  [div fallback] date={td}, value={v}, pos={j-i}")
+                        return {"divDate": td, "div": v}
+                except ValueError:
+                    continue
     return None
 
 def update_el(html, el_id, new_text):
@@ -96,8 +111,9 @@ def main():
                 f"https://www.moneydj.com/funddj/yp/wb05.djhtm?a={cfg['mdDiv']}"
             )
 
-            # Debug：印出配息頁前500字元看結構
-            print(f"  [div_html sample] {repr(div_html[1000:1300])}")
+            # debug：印出前20個 td 看結構
+            tds = extract_td_values(div_html)
+            print(f"  [div tds sample] {tds[:10]}")
 
             nav_data = parse_nav(nav_html)
             div_data = parse_div(div_html)
@@ -120,7 +136,7 @@ def main():
             if div_date:
                 html = update_el(html, f"divdate-{code}", div_date)
             else:
-                print(f"  SKIP divdate-{code} (no date found, keeping existing)")
+                print(f"  SKIP divdate-{code} (keeping existing)")
             cfg["div"] = div
 
         except Exception as e:
