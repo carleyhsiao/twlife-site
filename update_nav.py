@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 update_nav.py - 每天台灣時間 08:00 由 GitHub Actions 自動執行
-從 MoneyDJ 抓取 DB001-DB005 最新淨值及配息資料，更新 baofu.html
 """
 
 import re
@@ -40,39 +39,57 @@ def parse_nav(html):
 
 def parse_div(html):
     """
-    MoneyDJ 配息頁 - 用最寬鬆的方式找兩個相鄰日期：
-    不管日期在不在 <a> tag 裡，只要在同一個 <td> 附近找到兩個連續日期即可
+    找配息基準日：
+    - 找兩個相鄰日期（gap < 150）
+    - 第一個日期必須是「月中」（每月配息通常在 5~31 日）
+    - 且後面跟著配息金額 <td>小數</td>
     """
-    # 找所有在 HTML 中出現的日期
+    tw_now = datetime.now(timezone(timedelta(hours=8)))
+    today_str = tw_now.strftime("%Y/%m/%d")
+
     all_dates = list(re.finditer(r'\d{4}/\d{2}/\d{2}', html))
-    
-    print(f"  [div] 頁面中共找到 {len(all_dates)} 個日期")
-    if all_dates:
-        print(f"  [div] 前5個日期: {[m.group() for m in all_dates[:5]]}")
-    
-    # 找兩個位置相近的日期（同一行的基準日和除息日）
+    print(f"  [div] 共 {len(all_dates)} 個日期，今天={today_str}")
+
     for i in range(len(all_dates) - 1):
         d1 = all_dates[i]
         d2 = all_dates[i + 1]
         gap = d2.start() - d1.end()
-        
-        # 兩個日期之間距離很短（同一行）
-        if gap < 80:
+
+        if gap < 150:
             div_date = d1.group()
-            ex_date = d2.group()
+            ex_date  = d2.group()
+
+            # 排除今天或近期導覽日期（配息基準日通常比今天早至少 5 天）
+            from datetime import date
+            try:
+                div_dt = date(int(div_date[:4]), int(div_date[5:7]), int(div_date[8:]))
+                today  = tw_now.date()
+                if (today - div_dt).days < 5:
+                    print(f"  [div] 跳過近期日期 {div_date} (太新)")
+                    continue
+            except:
+                continue
+
             print(f"  [div] 找到相鄰日期: {div_date} / {ex_date} (gap={gap})")
-            
-            # 從第一個日期開始，往後找第一個合理的配息金額
+
+            # 在這個位置往後找配息金額 <td>小數</td>
             after = html[d1.start():d1.start() + 600]
             nums = re.findall(r'<td[^>]*>\s*([\d]+\.[\d]+)\s*</td>', after)
-            print(f"  [div] 往後找到的數字: {nums[:8]}")
-            
+            print(f"  [div] 數字候選: {nums[:8]}")
+
             for n in nums:
                 v = float(n)
                 if 0.001 < v < 100:
                     return {"divDate": div_date, "div": v}
-            break
-    
+
+            # 備用：找任何小數（不限 <td> 格式）
+            all_nums = re.findall(r'[\s>](\d+\.\d+)[\s<\r\n]', after)
+            print(f"  [div] 備用數字: {all_nums[:8]}")
+            for n in all_nums:
+                v = float(n)
+                if 0.001 < v < 100:
+                    return {"divDate": div_date, "div": v}
+
     return None
 
 def update_el(html, el_id, new_text):
@@ -135,7 +152,6 @@ def main():
 
     ts = tw_now.strftime("%Y/%m/%d %H:%M updated")
     html = re.sub(r'id="lastUpdate"[^>]*>[^<]*', f'id="lastUpdate">{ts}', html)
-    print(f"\nTimestamp: {ts}")
 
     with open("baofu.html", "w", encoding="utf-8") as f:
         f.write(html)
