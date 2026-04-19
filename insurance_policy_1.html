@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台灣人壽美鑫永旺美元利率變動型終身壽險</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #c0392b;
+    --red-light: #fdf0ee;
+    --blue: #1a4fa0;
+    --blue-light: #e8f0fc;
+    --navy: #1c2f52;
+    --navy-mid: #2c4d7c;
+    --gold: #b8860b;
+    --gold-light: #fdf8e8;
+    --green-hl: #c8f0c8;
+    --yellow-hl: #ffff00;
+    --bg: #f4f6fa;
+    --white: #ffffff;
+    --border: #c8cdd8;
+    --text: #1c2f52;
+    --muted: #6b7280;
+  }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 32px rgba(28,47,82,0.10);
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    color: #fff;
+    padding: 28px 36px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-icon {
+    width: 42px; height: 42px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; color: #fff;
+    font-family: 'Noto Serif TC', serif;
+    flex-shrink: 0;
+  }
+  .brand-name { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .brand-group { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+  .header-meta { text-align: right; font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.8; }
+  .title-block { text-align: center; }
+  .title-main {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 2px; color: #fff;
+    margin-bottom: 6px;
+  }
+  .title-sub {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px; font-weight: 500;
+    padding: 3px 18px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── Info bar ── */
+  .info-bar {
+    background: var(--gold-light);
+    border-bottom: 1px solid #e5d48a;
+    padding: 10px 36px;
+    font-size: 12px;
+    color: #5a4a00;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-bar strong { color: var(--gold); }
+
+  /* ── Summary table ── */
+  .summary-wrap { padding: 20px 36px 0; }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .summary-table th {
+    background: var(--navy-mid);
+    color: #fff;
+    padding: 8px 10px;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .summary-table td {
+    padding: 8px 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: #fafbfd;
+  }
+  .summary-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .note-text {
+    font-size: 10.5px; color: var(--muted);
+    text-align: center;
+    padding: 8px 36px 0;
+    line-height: 1.7;
+  }
+
+  /* ── Scenario bar ── */
+  .scenario-bar {
+    margin: 20px 36px 0;
+    background: #fffbea;
+    border: 1px solid #e0c84a;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 11.5px;
+    color: #5a4200;
+    line-height: 1.6;
+  }
+  .scenario-bar span { color: var(--red); font-weight: 600; }
+
+  /* ── Main table ── */
+  .main-wrap { padding: 16px 36px 36px; overflow-x: auto; }
+  .main-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .main-table th {
+    background: var(--navy-mid);
+    color: #fff;
+    padding: 7px 8px;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.15);
+    line-height: 1.5;
+    font-size: 11px;
+  }
+  .main-table td {
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    transition: background 0.15s;
+    line-height: 1.6;
+  }
+  .main-table td.num { text-align: right; }
+  .main-table tbody tr:hover td { filter: brightness(0.96); }
+
+  /* Row colour states */
+  .row-odd  td { background: #f5f8ff; }
+  .row-even td { background: #eaecf5; }
+  .row-m5   td { background: var(--green-hl); }
+  .row-be   td { background: var(--yellow-hl) !important; font-weight: 700; }
+
+  /* Labels inside cells */
+  .lbl-red  { color: var(--red);  font-weight: 700; font-size: 11px; display: block; margin-top: 2px; }
+  .lbl-blue { color: var(--blue); font-weight: 700; font-size: 11px; display: block; margin-top: 2px; }
+  .death-red { color: var(--red); font-weight: 700; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    padding: 0 36px 28px;
+    font-size: 11px; color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 14px; height: 14px; border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.12);
+    flex-shrink: 0;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 14px 36px;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.8;
+    background: #f9fafc;
+  }
+
+  @media (max-width: 700px) {
+    .header { padding: 20px 16px 16px; }
+    .summary-wrap, .main-wrap, .legend, .note-text, .scenario-bar { padding-left: 12px; padding-right: 12px; }
+    .info-bar { padding: 8px 12px; }
+    .title-main { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">壽</div>
+        <div>
+          <div class="brand-name">台灣人壽</div>
+          <div class="brand-group">中國信託金控</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        幣別／單位：美元／元<br>
+        試算日期：115年04月08日
+      </div>
+    </div>
+    <div class="title-block">
+      <div class="title-main">台灣人壽美鑫永旺美元利率變動型終身壽險</div>
+      <div style="margin-top:8px"><span class="title-sub">本商品無完全失能保險金</span></div>
+    </div>
+  </div>
+
+  <!-- Info bar -->
+  <div class="info-bar">
+    <strong>被保險人：</strong>張三 先生
+  </div>
+
+  <!-- Summary table -->
+  <div class="summary-wrap">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>性別</th>
+          <th>保險年齡</th>
+          <th>繳費別</th>
+          <th>基本保額</th>
+          <th>折扣前保費</th>
+          <th>折扣後保費</th>
+          <th>本月宣告利率<br>(假設值)(%)</th>
+          <th>本商品<br>預定利率(%)</th>
+          <th>首日解約金</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>男</td>
+          <td>60</td>
+          <td>一次繳</td>
+          <td class="num">1,731,602</td>
+          <td class="num">1,000,000</td>
+          <td class="num">960,000</td>
+          <td>4.30</td>
+          <td>1.75</td>
+          <td class="num">791,596.89</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note-text">
+    ※保險費實際數值以核保後之金額為準。※保險費80萬(含)～120萬美元(不含)，享3.0%保費折扣。<br>
+    ※繳費採金融機構轉帳方式，享1.0%保費折扣。
+  </div>
+
+  <!-- Scenario bar -->
+  <div class="scenario-bar" style="margin:16px 36px 0;">
+    情境一：假設每年宣告利率(4.30%)不變情況下
+    <span>（宣告利率並非固定利率，會隨台灣人壽宣告而有所變動。）</span>
+    &emsp;幣別／單位：美元／元
+  </div>
+
+  <!-- Main table -->
+  <div class="main-wrap">
+    <table class="main-table">
+      <thead>
+        <tr>
+          <th rowspan="3" style="min-width:52px">保單<br>年度(末)</th>
+          <th rowspan="3" style="min-width:52px">保險<br>年齡</th>
+          <th rowspan="3" style="min-width:96px">累積實繳保費</th>
+          <th colspan="2">年度末累積可領回增值回饋分享金(預估值)(非保證給付)(註6)<br>※(第1～6年限購買增額繳清保險)</th>
+          <th rowspan="3" style="min-width:110px">保單現金價值(解約金)<br>(註2、註4、註5)</th>
+          <th rowspan="3" style="min-width:120px">身故保險金<br>(含購買增額繳清保險金額)<br>(註2、註9、註11)</th>
+        </tr>
+        <tr>
+          <th colspan="2">(選擇一)購買增額繳清保險金額(預估值)<br>※已包含次一保單週年日始生效之增額繳清保險金額</th>
+        </tr>
+        <tr>
+          <th style="min-width:110px">累計購買增額繳清保險金額(註2、註3)</th>
+          <th style="min-width:60px"></th>
+        </tr>
+      </thead>
+      <tbody id="mainBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#ffff00"></div>
+      <span>現金價值首次超越累積保費年度（螢光黃）</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#c8f0c8"></div>
+      <span>保單年度為5的倍數（淺綠）</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#cc2200;border-radius:50%"></div>
+      <span style="color:#cc2200;font-weight:700">增值約X%</span>
+      <span>：超越年後一年起，每5年計算一次增值幅度</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#1a4fa0;border-radius:50%"></div>
+      <span style="color:#1a4fa0;font-weight:700">保障X倍</span>
+      <span>：超越年起，每5年計算一次身故保障倍數</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    註2：本商品保險金額係指基本保額加計購買增額繳清保險之保險金額。&emsp;
+    註3：累計購買增額繳清保險金額為預估值，實際金額依保單條款規定計算。&emsp;
+    註4：保單現金價值為預估值，實際金額依保單條款規定計算。&emsp;
+    註5：解約金係指保戶解除契約時所能領回之金額。&emsp;
+    註6：增值回饋分享金非保證給付，實際金額依公司宣告利率計算。&emsp;
+    註9：身故保險金含購買增額繳清保險之保險金額。&emsp;
+    註11：本商品無完全失能保險金。
+  </div>
+</div>
+
+<script>
+const DATA = [
+  [1,60,960000,44156,826424.17,1190439.76],
+  [2,61,960000,89438,863287.81,1144807.73],
+  [3,62,960000,135875,901639.34,1192533.46],
+  [4,63,960000,183496,982279.81,1915098.00],
+  [5,64,960000,232331,1055400.27,1937420.00],
+  [6,65,960000,282411,1091951.57,1960037.00],
+  [7,66,960000,333768,1139010.25,1982755.00],
+  [8,67,960000,386435,1177501.49,2005993.00],
+  [9,68,960000,440445,1216845.89,2029344.00],
+  [10,69,960000,495832,1256985.55,2053026.00],
+  [11,70,960000,552632,1297216.49,2076826.00],
+  [12,71,960000,610880,1338166.27,2101206.00],
+  [13,72,960000,670613,1379856.31,2125720.00],
+  [14,73,960000,731869,1422211.08,2150364.00],
+  [15,74,960000,794688,1465222.93,2175388.00],
+  [16,75,960000,859108,1509010.86,2200808.00],
+  [17,76,960000,925171,1553388.60,2226376.00],
+  [18,77,960000,992919,1598313.00,2252362.00],
+  [19,78,960000,1062394,1643707.85,2278783.00],
+  [20,79,960000,1133641,1689519.19,2305375.00],
+];
+
+function fmt(v) {
+  return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Find breakeven index
+let beIdx = -1;
+for (let i = 0; i < DATA.length; i++) {
+  if (DATA[i][4] >= DATA[i][2]) { beIdx = i; break; }
+}
+
+// Increase labels: from beIdx+1, every 5 rows
+// Formula: (current cash - prev year cash) / current cumulative premium
+const incMap = {};
+if (beIdx >= 0) {
+  for (let idx = beIdx + 1; idx < DATA.length; idx += 5) {
+    const prevIdx = idx - 1;
+    const pct = ((DATA[idx][4] - DATA[prevIdx][4]) / DATA[idx][2] * 100).toFixed(2);
+    incMap[idx] = '增值約' + pct + '%';
+  }
+}
+
+// Multiplier labels: from beIdx, every 5 rows
+const mulMap = {};
+if (beIdx >= 0) {
+  for (let idx = beIdx; idx < DATA.length; idx += 5) {
+    const mul = (DATA[idx][5] / DATA[idx][2]).toFixed(2);
+    mulMap[idx] = '保障' + mul + '倍';
+  }
+}
+
+const tbody = document.getElementById('mainBody');
+DATA.forEach((r, i) => {
+  const [yr, age, prem, accum, cash, death] = r;
+  const isBE = i === beIdx;
+  const is5  = yr % 5 === 0;
+  const inc  = incMap[i] || '';
+  const mul  = mulMap[i] || '';
+
+  const tr = document.createElement('tr');
+  tr.className = isBE ? 'row-be' : is5 ? 'row-m5' : i % 2 === 0 ? 'row-odd' : 'row-even';
+
+  const cashTd = `<td class="num">${fmt(cash)}${inc ? '<span class="lbl-red">' + inc + '</span>' : ''}</td>`;
+  const deathTd = `<td class="num${isBE ? '' : ' death-red'}">${fmt(death)}${mul ? '<span class="lbl-blue">' + mul + '</span>' : ''}</td>`;
+
+  tr.innerHTML = `
+    <td>${yr}</td>
+    <td>${age}</td>
+    <td class="num">${fmt(prem)}</td>
+    <td class="num">${fmt(accum)}</td>
+    <td>-----</td>
+    ${cashTd}
+    ${deathTd}
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
